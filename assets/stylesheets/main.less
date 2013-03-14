@@ -71,10 +71,15 @@ body { font-size: 62.5%; background: #000; }
 
 	#game { background: #ccc;
 			.board { width: 66%; height: 100%; background: green; border-bottom: 1px solid #000; border-right: 1px solid #000;
-				div { width: 12.5%; height: 12.5%; float:left; .border-box; border-top: 1px solid #000; border-left: 1px solid #000; 
-					.piece { width: 90%; height: 90%; margin: 5%; box-shadow: 0 0 5px rgba(0, 0, 0, 0.5); border-radius: 50%; display: block; .border-box;
-						&.white { background: #fff; color: #333; border: 1px solid #000; }
-						&.black { background: #333; color: #fff; border: 1px solid #fff; }
+				/* Board squares */
+				& > div { width: 12.5%; height: 12.5%; float:left; .border-box; border-top: 1px solid #000; border-left: 1px solid #000; -webkit-perspective: 1000; perspective: 1000; /* Not sure if this should be here or not */
+
+					/* Pieces */
+					.piece { position: relative; width: 90%; height: 90%; margin: 5%; -webkit-transform-style: preserve-3d; transform-style: preserve-3d;
+						.white, .black { position: absolute; top: 0; left: 0; width: 100%; height: 100%; box-shadow: 0 0 5px rgba(0, 0, 0, 0.5); border-radius: 50%; display: block; .border-box; -webkit-backface-visibility: hidden; backface-visibility: hidden; }
+
+						.white { background: #fff; color: #333; border: 1px solid #000; z-index: 1; }
+						.black { background: #333; color: #fff; border: 1px solid #fff; -webkit-transform: rotateY(180deg); -moz-transform: rotateY(180deg); transform: rotateY(180deg); }
 					}
 				}
 			}

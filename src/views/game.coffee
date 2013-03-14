@@ -14,10 +14,12 @@ define [
 			# Determine whether touchscreen or desktop
 			if Env.mobile
 				events = 
+					'touchstart .new': 'reset'
 					'touchstart .back': 'back'
 					'touchstart .board > div': 'move'
 			else
 				events = 
+					'click .new': 'reset'
 					'click .back': 'back'
 					'click .board > div': 'move'
 
@@ -33,6 +35,8 @@ define [
 
 			# Reference for the game board
 			@board = $('.board', @elem)
+
+			@turns = 0
 
 			@render()
 
@@ -56,54 +60,111 @@ define [
 			if square.children('.piece').length > 0 then return
 
 			# Don't allow nested piece placement
-			if square.hasClass('piece') then return
+			if not square.data('index') then return
 
 			# Simple validation
 			# if @validMove() is false then return
 
-			square.append """<div class="piece #{@currentTurn}"></div>"""
+			# Complicated HTML to allow each piece to have a white + black side
+			piece = $('<div class="piece"><div class="white"></div><div class="black"></div>')
+
+			square.append piece
+
+			# Flip to black if necessary - use "animate" so vendor prefixes are automatically added
+			if @currentPlayer is 'black'
+				piece.css { '-webkit-transform': 'rotateY(180deg)' }
+
+			# First 4 moves won't swap any other pieces, so skip the "swapping" logic
+			if @turns < 4
+				# Change active player turn
+				if @currentPlayer is "black" then @currentPlayer = "white" else @currentPlayer = "black"
+				@turns += 1
+				return
 
 			# Check to see which pieces get flipped
 			# Find the index of the current piece
 			index = square.data 'index'
 
+			console.log "Clicked square: #{index}"
+
+			# Some calculations can be left out here, because move validity is 
+			# enforced prior to this code
+
 			# Go left until we find a same colored piece
-			# Go right until we find a same colored piece
-			# Go up until we find a same colored piece or
-			i = index - 8
-			while i > 0
+			i = index - 1
+			j = Math.floor(index / 8) * 8
+			while i > j
 				piece = @board.children('div').eq(i).children('.piece')
 				
-				debugger;
-
 				# End condition
-				if piece.length is 0 or piece.hasClass(@currentTurn) then i = 0
+				if piece.length is 0 or piece.data('color') is @currentPlayer then i = j
 
-				piece.addClass @currentTurn
+				piece.animate { 'transform': 'rotateY(180deg)' }, 250, 'ease-in-out'
+				piece.data 'color', @currentPlayer
+
+				i -= 1
+
+			# Go right until we find a same colored piece
+			i = index + 1
+			j = Math.floor(index / 8) * 8 + 8
+			while i < j
+				piece = @board.children('div').eq(i).children('.piece')
+				
+				# End condition
+				if piece.length is 0 or piece.data('color') is @currentPlayer then i = j
+
+				piece.animate { 'transform': 'rotateY(180deg)' }, 250, 'ease-in-out'
+				piece.data 'color', @currentPlayer
+
+				i += 1
+
+			# Go up until we find a same colored piece or
+			i = index - 8
+			j = 0
+			while i > j
+				piece = @board.children('div').eq(i).children('.piece')
+				
+				# End condition
+				if piece.length is 0 or piece.data('color') is @currentPlayer then i = j
+
+				piece.animate { 'transform': 'rotateY(180deg)' }, 250, 'ease-in-out'
+				piece.data 'color', @currentPlayer
 
 				i -= 8
 
 			# Go down until we find a same colored piece
-			# i = index + 8
-			# while i < 64
-			# 	piece = @board.children('div').eq(i).children('.piece')
-			# 	console.log "checking #{i}"
+			i = index + 8
+			j = 64
+			while i < j
+				piece = @board.children('div').eq(i).children('.piece')
 				
-			# 	# End condition
-			# 	if piece is undefined or piece.hasClass(@currentTurn) then i = 64
+				# End condition
+				if piece.length is 0 or piece.data('color') is @currentPlayer then i = j
 
-			# 	piece.addClass @currentTurn
+				piece.animate { 'transform': 'rotateY(180deg)' }, 250, 'ease-in-out'
+				piece.data 'color', @currentPlayer
 
-			# 	i += 8
+				i += 8
 
 			# Swap turn
-			if @currentTurn is "black" then @currentTurn = "white" else @currentTurn = "black"
+			if @currentPlayer is "black" then @currentPlayer = "white" else @currentPlayer = "black"
+
+			@turns += 1
 
 		checkWinCondition: ->
 			console.log "Winning!"
 
 		validMove: (squareId) ->
 			console.log "Validating!"
+			###
+				Valid moves must be next to at least one piece of the opposite color
+			###
+
+			# Validation for first 4 moves just ensures they're at the center of the board
+			if @turns < 4 and [27, 28, 36, 36].indexOf(squareId) is -1
+				return false
+
+			return true
 
 		resize: (width, height, orientation) ->
 			# Use Math.floor here to ensure the grid doesn't round up to be larger than width/height of container
@@ -130,7 +191,7 @@ define [
 		show: (duration = 500, callback) ->
 			super duration, callback
 
-			@currentTurn = "black"
+			@currentPlayer = "black"
 
 			# Add an "index" value to each board square
 			@board.find('div').each (i, element)->
