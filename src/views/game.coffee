@@ -62,89 +62,34 @@ define [
 			# Don't allow nested piece placement
 			if not square.data('index') then return
 
+			# Find the index of the current piece
+			index = parseInt square.data('index'), 10
+
 			# Simple validation
-			# if @validMove() is false then return
+			captured = @validate index, @currentPlayer
+
+			if captured is false
+				console.log 'Invalid move!'
+				return
+
+			# Otherwise, place the piece and flip captured pieces
 
 			# Complicated HTML to allow each piece to have a white + black side
 			piece = $('<div class="piece"><div class="white"></div><div class="black"></div>')
 
 			square.append piece
 
-			# Flip to black if necessary - use "animate" so vendor prefixes are automatically added
-			if @currentPlayer is 'black'
-				piece.css { '-webkit-transform': 'rotateY(180deg)' }
+			# Flip to black if necessary - TODO: use "animate" so vendor prefixes are automatically added
+			if @currentPlayer is 'black' then piece.css({ '-webkit-transform': 'rotateY(180deg)' }).data('color', 'black')
 
-			# First 4 moves won't swap any other pieces, so skip the "swapping" logic
-			if @turns < 4
-				# Change active player turn
-				if @currentPlayer is "black" then @currentPlayer = "white" else @currentPlayer = "black"
-				@turns += 1
-				return
-
-			# Check to see which pieces get flipped
-			# Find the index of the current piece
-			index = square.data 'index'
-
-			console.log "Clicked square: #{index}"
-
-			# Some calculations can be left out here, because move validity is 
-			# enforced prior to this code
-
-			# Go left until we find a same colored piece
-			i = index - 1
-			j = Math.floor(index / 8) * 8
-			while i > j
-				piece = @board.children('div').eq(i).children('.piece')
-				
-				# End condition
-				if piece.length is 0 or piece.data('color') is @currentPlayer then i = j
-
-				piece.animate { 'transform': 'rotateY(180deg)' }, 250, 'ease-in-out'
-				piece.data 'color', @currentPlayer
-
-				i -= 1
-
-			# Go right until we find a same colored piece
-			i = index + 1
-			j = Math.floor(index / 8) * 8 + 8
-			while i < j
-				piece = @board.children('div').eq(i).children('.piece')
-				
-				# End condition
-				if piece.length is 0 or piece.data('color') is @currentPlayer then i = j
-
-				piece.animate { 'transform': 'rotateY(180deg)' }, 250, 'ease-in-out'
-				piece.data 'color', @currentPlayer
-
-				i += 1
-
-			# Go up until we find a same colored piece or
-			i = index - 8
-			j = 0
-			while i > j
-				piece = @board.children('div').eq(i).children('.piece')
-				
-				# End condition
-				if piece.length is 0 or piece.data('color') is @currentPlayer then i = j
-
-				piece.animate { 'transform': 'rotateY(180deg)' }, 250, 'ease-in-out'
-				piece.data 'color', @currentPlayer
-
-				i -= 8
-
-			# Go down until we find a same colored piece
-			i = index + 8
-			j = 64
-			while i < j
-				piece = @board.children('div').eq(i).children('.piece')
-				
-				# End condition
-				if piece.length is 0 or piece.data('color') is @currentPlayer then i = j
-
-				piece.animate { 'transform': 'rotateY(180deg)' }, 250, 'ease-in-out'
-				piece.data 'color', @currentPlayer
-
-				i += 8
+			# Flip captured pieces
+			captured.forEach (group, i) =>
+				if group.length != undefined
+					group.forEach (pieceIndex, j) =>
+						piece = @board.children('div').eq(pieceIndex).children('.piece')
+						# TODO: Determine when to rotate to 180deg and when to rotate to 0deg
+						piece.animate { '-webkit-transform': 'rotateY(180deg)' }, 250, 'ease-in-out'
+						piece.data 'color', @currentPlayer
 
 			# Swap turn
 			if @currentPlayer is "black" then @currentPlayer = "white" else @currentPlayer = "black"
@@ -154,17 +99,186 @@ define [
 		checkWinCondition: ->
 			console.log "Winning!"
 
-		validMove: (squareId) ->
-			console.log "Validating!"
-			###
-				Valid moves must be next to at least one piece of the opposite color
-			###
-
+		###
+		Valid moves must be next to at least one piece of the opposite color in one of 8 directions;
+			in one of those 8 directions, there must be another piece of the same color after the first piece
+		###
+		validate: (index, color) ->
 			# Validation for first 4 moves just ensures they're at the center of the board
-			if @turns < 4 and [27, 28, 36, 36].indexOf(squareId) is -1
+			if @turns < 4 and [27, 28, 35, 36].indexOf(index) == -1
 				return false
+			else if @turns < 4 and [27, 28, 35, 36].indexOf(index) != -1
+				return []
 
-			return true
+			# Call our eight (TODO) validation methods
+			left = @validateLeft index, color
+			top = @validateTop index, color
+			right = @validateRight index, color
+			bottom = @validateBottom index, color
+
+			console.log [ left, top, right, bottom ]
+
+			if not left and not top and not right and not bottom
+				return false
+			else
+				return [ left, top, right, bottom ]
+
+		###
+		@description One of eight validation methods; checks to the left of a potentially placed piece
+		@param {Number} index The board index of the (potentially) new piece
+		@param {String} color The color of the (potentially) new piece
+		###
+		validateLeft: (index, color) ->
+			squares = @board.children('div')
+			leftBorder = Math.floor(index / 8) * 8
+
+			# If too close to the left border of the board, automatically return false
+			if index - 1 <= leftBorder then return false
+
+			piece = squares.eq(index - 1).children('.piece')
+			# Check to see if the first square to the left exists, and is a different color
+			if piece.length == 0 or piece.data('color') == color then return false
+
+			# Now, search for a piece of the same color
+			i = index - 2
+			j = leftBorder
+			captured = [index - 1]
+
+			while i > j
+				piece = squares.eq(i).children('.piece')
+				
+				# If we hit an empty space before a same-color piece, nothing is valid in that direction
+				if piece.length is 0 then return false
+
+				# For a successful move, we have to encounter another piece of the same color
+				if piece.data('color') is color then i = j else captured.push i
+
+				i -= 1
+
+			# If the "captured" array includes the last square, that means there were no opposite-colored pieces
+			if captured.indexOf(j) != -1 then return false
+
+			# Finally, we have a valid move, and are returning an array of square indices that contain "captured" pieces
+			return captured
+
+		###
+		@description One of eight validation methods; checks to the right of a potentially placed piece
+		@param {Number} index The board index of the (potentially) new piece
+		@param {String} color The color of the (potentially) new piece
+		###
+		validateRight: (index, color) ->
+			squares = @board.children('div')
+			rightBorder = Math.floor(index / 8) * 8 + 7
+
+			# If too close to the right border of the board, automatically return false
+			if index + 1 >= rightBorder then return false
+
+			piece = squares.eq(index + 1).children('.piece')
+			# Check to see if the first square to the right exists, and is a different color
+			if piece.length == 0 or piece.data('color') == color then return false
+
+			# Now, search for a piece of the same color
+			i = index + 2
+			j = rightBorder
+			captured = [index + 1]
+
+			while i < j
+				piece = squares.eq(i).children('.piece')
+				
+				# If we hit an empty space before a same-color piece, nothing is valid in that direction
+				if piece.length is 0 then return false
+
+				# For a successful move, we have to encounter another piece of the same color
+				if piece.data('color') is color then i = j else captured.push i
+
+				i += 1
+
+			# If the "captured" array includes the last square, that means there were no opposite-colored pieces
+			if captured.indexOf(j) != -1 then return false
+
+			# Finally, we have a valid move, and are returning an array of square indices that contain "captured" pieces
+			return captured
+
+		###
+		@description One of eight validation methods; checks to the top of a potentially placed piece
+		@param {Number} index The board index of the (potentially) new piece
+		@param {String} color The color of the (potentially) new piece
+		###
+		validateTop: (index, color) ->
+			squares = @board.children('div')
+			# If too close to the right border of the board, automatically return false
+			if index - 8 <= 0 then return false
+
+			piece = squares.eq(index - 8).children('.piece')
+			# Check to see if the first square to the top exists, and is a different color
+			if piece.length == 0 or  piece.data('color') == color then return false
+
+			# Now, search for a piece of the same color
+			i = index - 16
+			j = 0
+			captured = [index - 8]
+
+			while i > j
+				piece = squares.eq(i).children('.piece')
+				
+				# If we hit an empty space before a same-color piece, nothing is valid in that direction
+				if piece.length is 0 then return false
+
+				# For a successful move, we have to encounter another piece of the same color
+				if piece.data('color') is color then i = j else captured.push i
+
+				i += 1
+
+			# If the "captured" array includes the last square, that means there were no opposite-colored pieces
+			if captured.indexOf(j) != -1 then return false
+
+			# Finally, we have a valid move, and are returning an array of square indices that contain "captured" pieces
+			return captured
+
+		###
+		@description One of eight validation methods; checks to the bottom of a potentially placed piece
+		@param {Number} index The board index of the (potentially) new piece
+		@param {String} color The color of the (potentially) new piece
+		###
+		validateBottom: (index, color) ->
+			squares = @board.children('div')
+			bottomBorder = 63 - index % 8
+
+			# If too close to the right border of the board, automatically return false
+			if index + 8 >= bottomBorder then return false
+
+			piece = squares.eq(index + 8).children('.piece')
+			# Check to see if the first square to the bottom exists, and is a different color
+			if piece.length == 0 or piece.data('color') == color then return false
+
+			# Now, search for a piece of the same color
+			i = index + 16
+			j = bottomBorder
+			captured = [index + 8]
+
+			while i > j
+				piece = squares.eq(i).children('.piece')
+				
+				# If we hit an empty space before a same-color piece, nothing is valid in that direction
+				if piece.length is 0 then return false
+
+				# For a successful move, we have to encounter another piece of the same color
+				if piece.data('color') is color then i = j else captured.push i
+
+				i += 1
+
+			# If the "captured" array includes the last square, that means there were no opposite-colored pieces
+			if captured.indexOf(j) != -1 then return false
+
+			# Finally, we have a valid move, and are returning an array of square indices that contain "captured" pieces
+			return captured
+
+		###
+		@description Remove existing pieces, and reset the game
+		###
+		reset: ->
+			@elem.find('.piece').remove()
+			@turns = 0
 
 		resize: (width, height, orientation) ->
 			# Use Math.floor here to ensure the grid doesn't round up to be larger than width/height of container
@@ -194,7 +308,7 @@ define [
 			@currentPlayer = "black"
 
 			# Add an "index" value to each board square
-			@board.find('div').each (i, element)->
+			@board.children('div').each (i, element)->
 				$(element).data 'index', i
 
 			# Remove existing pieces
