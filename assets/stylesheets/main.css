@@ -1,0 +1,866 @@
+/* Prevents user select */
+.user-select-none {
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+  -ms-user-select: none;
+  -ms-touch-callout: none;
+  -ms-tap-highlight-color: transparent;
+  -moz-user-select: none;
+  -moz-touch-callout: none;
+  -moz-tap-highlight-color: transparent;
+  user-select: none;
+  touch-callout: none;
+  tap-highlight-color: transparent;
+}
+/* Makes width/height include padding & border */
+.border-box {
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  -ms-box-sizing: border-box;
+  box-sizing: border-box;
+}
+@-webkit-keyframes spaceboots {
+  0% {
+    -webkit-transform: translate(2px, 1px) rotate(0deg);
+  }
+  10% {
+    -webkit-transform: translate(-1px, -2px) rotate(-1deg);
+  }
+  20% {
+    -webkit-transform: translate(-3px, 0px) rotate(1deg);
+  }
+  30% {
+    -webkit-transform: translate(0px, 2px) rotate(0deg);
+  }
+  40% {
+    -webkit-transform: translate(1px, -1px) rotate(1deg);
+  }
+  50% {
+    -webkit-transform: translate(-1px, 2px) rotate(-1deg);
+  }
+  60% {
+    -webkit-transform: translate(-3px, 1px) rotate(0deg);
+  }
+  70% {
+    -webkit-transform: translate(2px, 1px) rotate(-1deg);
+  }
+  80% {
+    -webkit-transform: translate(-1px, -1px) rotate(1deg);
+  }
+  90% {
+    -webkit-transform: translate(2px, 2px) rotate(0deg);
+  }
+  100% {
+    -webkit-transform: translate(1px, -2px) rotate(-1deg);
+  }
+}
+@-moz-keyframes spaceboots {
+  0% {
+    -moz-transform: translate(2px, 1px) rotate(0deg);
+  }
+  10% {
+    -moz-transform: translate(-1px, -2px) rotate(-1deg);
+  }
+  20% {
+    -moz-transform: translate(-3px, 0px) rotate(1deg);
+  }
+  30% {
+    -moz-transform: translate(0px, 2px) rotate(0deg);
+  }
+  40% {
+    -moz-transform: translate(1px, -1px) rotate(1deg);
+  }
+  50% {
+    -moz-transform: translate(-1px, 2px) rotate(-1deg);
+  }
+  60% {
+    -moz-transform: translate(-3px, 1px) rotate(0deg);
+  }
+  70% {
+    -moz-transform: translate(2px, 1px) rotate(-1deg);
+  }
+  80% {
+    -moz-transform: translate(-1px, -1px) rotate(1deg);
+  }
+  90% {
+    -moz-transform: translate(2px, 2px) rotate(0deg);
+  }
+  100% {
+    -moz-transform: translate(1px, -2px) rotate(-1deg);
+  }
+}
+.shake {
+  -webkit-animation-name: spaceboots;
+  -webkit-animation-duration: 0.8s;
+  -webkit-transform-origin: 50% 50%;
+  -webkit-animation-iteration-count: infinite;
+  -webkit-animation-timing-function: linear;
+  -moz-animation-name: spaceboots;
+  -moz-animation-duration: 0.8s;
+  -moz-transform-origin: 50% 50%;
+  -moz-animation-iteration-count: infinite;
+  -moz-animation-timing-function: linear;
+}
+@font-face {
+  font-family: 'uni_05_53';
+  src: url('../fonts/uni0553-webfont-webfont.eot');
+  src: url('../fonts/uni0553-webfont-webfont.eot?#iefix') format('embedded-opentype'), url('../fonts/uni0553-webfont-webfont.woff') format('woff'), url('../fonts/uni0553-webfont-webfont.ttf') format('truetype'), url('../fonts/uni0553-webfont-webfont.svg#uni_05_53regular') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+html,
+body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+body {
+  font-size: 62.5%;
+  background: #000;
+}
+/****************************/
+/*			DEFAULT			*/
+/****************************/
+#nonograms {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  overflow: hidden;
+  font: normal 1.6em/1.5 'uni_05_53', sans-serif;
+  text-align: center;
+  color: #ffffff;
+  background: url('../images/ipad-startup-portrait.png') center center no-repeat #000000;
+  background-size: cover;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+  -ms-user-select: none;
+  -ms-touch-callout: none;
+  -ms-tap-highlight-color: transparent;
+  -moz-user-select: none;
+  -moz-touch-callout: none;
+  -moz-tap-highlight-color: transparent;
+  user-select: none;
+  touch-callout: none;
+  tap-highlight-color: transparent;
+  /*				LANDSCAPE 			*/
+
+  /************************************/
+
+}
+#nonograms .scene {
+  position: absolute;
+  left: 100%;
+  width: 100%;
+  height: 100%;
+  background: url('../images/background.png');
+  background-size: cover;
+  overflow: hidden;
+}
+#nonograms .scene .container {
+  overflow: hidden;
+}
+#nonograms .scene.in {
+  -webkit-transition: -webkit-transform 0.5s ease-in-out;
+  -webkit-transform: translateX(-100%);
+  -moz-transition: -moz-transform 0.5s ease-in-out;
+  -moz-transform: translateX(-100%);
+  transition: transform 0.5s ease-in-out;
+  transform: translateX(-100%);
+}
+#nonograms .scene.out {
+  -webkit-transition: -webkit-transform 0.5s ease-in-out;
+  -webkit-transform: translateX(-200%);
+  -moz-transition: -moz-transform 0.5s ease-in-out;
+  -moz-transform: translateX(-200%);
+  transition: transform 0.5s ease-in-out;
+  transform: translateX(-200%);
+}
+#nonograms h1 {
+  font: normal 2.6em/1.5 'uni_05_53', sans-serif;
+  margin: 3%;
+  text-shadow: 5px 5px 0 rgba(0, 0, 0, 0.5);
+  -webkit-text-stroke: 5px 5px rgba(0, 0, 0, 0.5);
+  -moz-text-stroke: 5px 5px rgba(0, 0, 0, 0.5);
+  -ms-text-stroke: 5px 5px rgba(0, 0, 0, 0.5);
+}
+#nonograms h2 {
+  font: normal 2.3em/1.5 'uni_05_53', sans-serif;
+  margin: 3%;
+  text-shadow: 5px 5px 0 rgba(0, 0, 0, 0.5);
+  -webkit-text-stroke: 5px 5px rgba(0, 0, 0, 0.5);
+  -moz-text-stroke: 5px 5px rgba(0, 0, 0, 0.5);
+  -ms-text-stroke: 5px 5px rgba(0, 0, 0, 0.5);
+}
+#nonograms .button {
+  font: normal 1.5em/1 'uni_05_53', sans-serif;
+  width: 50%;
+  height: 10%;
+  border: 5px solid #000;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  -ms-box-sizing: border-box;
+  box-sizing: border-box;
+  padding: 0;
+  background: #665945;
+  color: #fff;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  margin: 1.5%;
+  box-shadow: 5px 5px 0 rgba(0, 0, 0, 0.5);
+}
+#nonograms .button span {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-left: 5px solid #7b6c55;
+  border-top: 5px solid #7b6c55;
+  border-bottom: 5px solid #3c362c;
+  border-right: 5px solid #3c362c;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  -ms-box-sizing: border-box;
+  box-sizing: border-box;
+}
+#nonograms .button:active {
+  box-shadow: none;
+}
+#nonograms .button.small {
+  width: 30%;
+  height: 8%;
+  font-size: 1em;
+  line-height: 1.1;
+}
+#nonograms .button.back {
+  float: left;
+}
+#nonograms .button.previous,
+#nonograms .button.next {
+  width: 14%;
+  height: 9%;
+  line-height: 2;
+  font-size: 0.8em;
+}
+#nonograms .button.previous.disabled,
+#nonograms .button.next.disabled {
+  opacity: 0.5;
+}
+#nonograms ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: auto;
+}
+#nonograms p {
+  margin: 0;
+}
+#nonograms .overlay {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  left: 0px;
+  top: 0px;
+  background: rgba(0, 0, 0, 0.65);
+  background: -webkit-radial-gradient(center, ellipse cover, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.65) 100%);
+  z-index: 3;
+  opacity: 0;
+}
+#nonograms .dialog-box {
+  background: #fff;
+  color: #000;
+  padding: 3%;
+  border: 5px solid #000;
+  box-shadow: 5px 5px 0 rgba(0, 0, 0, 0.5);
+  position: absolute;
+  width: 70%;
+  z-index: 4;
+  opacity: 0;
+}
+#nonograms .dialog-box h3 {
+  margin: 0;
+  font-size: 1.3em;
+  font-weight: normal;
+}
+#nonograms .dialog-box .button {
+  width: auto;
+  margin-top: 2%;
+}
+#nonograms #title h1 {
+  font-size: 3em;
+  margin-top: 10%;
+}
+#nonograms #title .copyright {
+  text-shadow: 5px 5px 0 rgba(0, 0, 0, 0.5);
+  -webkit-text-stroke: 5px 5px rgba(0, 0, 0, 0.5);
+  -moz-text-stroke: 5px 5px rgba(0, 0, 0, 0.5);
+  -ms-text-stroke: 5px 5px rgba(0, 0, 0, 0.5);
+  text-align: center;
+  margin-top: 25%;
+}
+#nonograms #game .floating-text {
+  position: absolute;
+  color: #333;
+  font: normal 2em/1.5 'uni_05_53', sans-serif;
+  text-shadow: 5px 5px 0 rgba(0, 0, 0, 0.5);
+  -webkit-text-stroke: 5px 5px rgba(0, 0, 0, 0.5);
+  -moz-text-stroke: 5px 5px rgba(0, 0, 0, 0.5);
+  -ms-text-stroke: 5px 5px rgba(0, 0, 0, 0.5);
+}
+#nonograms #game .top {
+  height: 20%;
+  width: 100%;
+}
+#nonograms #game .bottom {
+  height: 10%;
+  width: 100%;
+}
+#nonograms #game .actions {
+  width: 45%;
+  height: 100%;
+  line-height: 95%;
+  margin: 2% 1%;
+}
+#nonograms #game .actions.highlight {
+  color: #fb9a00;
+}
+#nonograms #game .actions.pause {
+  width: 14%;
+  height: 100%;
+  float: left;
+  font-size: 1.4em;
+}
+#nonograms #game .actions.pause .text {
+  -webkit-transform: rotateZ(-90deg);
+  -moz-transform: rotateZ(-90deg);
+  transform: rotateZ(-90deg);
+  line-height: 3.3;
+  height: 100%;
+  margin-top: 85%;
+  border: 0;
+}
+#nonograms #game .actions.mark,
+#nonograms #game .actions.fill {
+  height: 90%;
+}
+#nonograms #game .actions.mark .text,
+#nonograms #game .actions.fill .text {
+  border: 0;
+  text-transform: uppercase;
+}
+#nonograms #game .actions.mark .icon,
+#nonograms #game .actions.fill .icon {
+  display: inline-block;
+  border: 0;
+  background-size: cover;
+  width: 19%;
+  height: 80%;
+  vertical-align: -15%;
+}
+#nonograms #game .actions.mark .icon {
+  background-image: url('../images/marked.png');
+  background-color: #fff;
+  border: 1px solid black;
+}
+#nonograms #game .actions.fill .icon {
+  background-image: url('../images/filled.png');
+}
+#nonograms #game .info {
+  background: #fff;
+  font-size: 1.8em;
+  vertical-align: top;
+  height: 100%;
+  margin: 2%;
+  line-height: 1.3;
+  color: #000;
+  border: 5px solid #000;
+  display: inline-block;
+  overflow: hidden;
+  box-shadow: 5px 5px 0 rgba(0, 0, 0, 0.5);
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  -ms-box-sizing: border-box;
+  box-sizing: border-box;
+}
+#nonograms #game .info.complete {
+  font-size: 1em;
+  width: 30%;
+}
+#nonograms #game .info.complete .percentage {
+  font-size: 2.5em;
+  line-height: 0.6;
+  padding: 10% 0;
+}
+#nonograms #game .info.timer {
+  font-size: 1.6em;
+  width: 40%;
+  padding-top: 2%;
+}
+#nonograms #game .info.timer span {
+  display: inline-block;
+  font-size: 1.2em;
+}
+#nonograms #game .info.timer .minutes {
+  text-align: right;
+}
+#nonograms #game .info.timer .seconds {
+  text-align: left;
+  width: 35%;
+}
+#nonograms #game .grid-background {
+  width: 100%;
+  height: 67%;
+  overflow: hidden;
+  background: #fff;
+  border: 5px solid #000;
+  box-shadow: 5px 5px 0 rgba(0, 0, 0, 0.5);
+}
+#nonograms #game .grid-background .minimap {
+  width: 25%;
+  height: 25%;
+  float: left;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  -ms-box-sizing: border-box;
+  box-sizing: border-box;
+}
+#nonograms #game .grid-background .clue {
+  float: left;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  -ms-box-sizing: border-box;
+  box-sizing: border-box;
+  color: #000;
+  font-size: 0.9em;
+}
+#nonograms #game .grid-background .clue.horizontal {
+  height: 7.5%;
+  width: 25%;
+  padding-right: 2%;
+  border-top: 1px solid #000;
+  text-align: right;
+  line-height: 1.5;
+}
+#nonograms #game .grid-background .clue.horizontal:nth-child(2n - 1) {
+  background-color: #d6e8ee;
+}
+#nonograms #game .grid-background .clue.vertical {
+  height: 25%;
+  width: 7.5%;
+  border-left: 1px solid #000;
+  line-height: 1.2;
+}
+#nonograms #game .grid-background .clue.vertical:nth-child(2n) {
+  background-color: #d6e8ee;
+}
+#nonograms #game .grid-background .clue.highlight {
+  background-color: rgba(251, 154, 0, 0.7) !important;
+}
+#nonograms #game .grid-background .clue.complete {
+  color: #999;
+}
+#nonograms #game .grid-background .clue.pinch {
+  font-size: 0.7em;
+}
+#nonograms #game .grid-background .grid {
+  width: 75%;
+  height: 75%;
+  float: right;
+}
+#nonograms #game .grid-background .grid div {
+  width: 10%;
+  height: 10%;
+  border-top: 1px solid #000;
+  border-left: 1px solid #000;
+  float: left;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  -ms-box-sizing: border-box;
+  box-sizing: border-box;
+}
+#nonograms #game .grid-background .grid div.marked {
+  background-image: url('../images/marked.png');
+  background-size: 100%;
+}
+#nonograms #game .grid-background .grid div.filled {
+  background-image: url('../images/filled.png');
+  background-size: 100%;
+}
+#nonograms #game .grid-background .grid div.hint {
+  background-color: rgba(251, 154, 0, 0.5);
+}
+#nonograms #about {
+  color: #fff;
+}
+#nonograms #about h2 {
+  clear: left;
+  padding-top: 3%;
+}
+#nonograms #about p {
+  text-shadow: 5px 5px 0 rgba(0, 0, 0, 0.5);
+  -webkit-text-stroke: 5px 5px rgba(0, 0, 0, 0.5);
+  -moz-text-stroke: 5px 5px rgba(0, 0, 0, 0.5);
+  -ms-text-stroke: 5px 5px rgba(0, 0, 0, 0.5);
+  font-size: 1.1em;
+  padding: 3%;
+}
+#nonograms #about .reset {
+  font-size: 1.3em;
+  line-height: 1.5;
+}
+#nonograms #options {
+  color: #fff;
+}
+#nonograms #options h2 {
+  clear: left;
+  padding-top: 3%;
+}
+#nonograms #options p {
+  font-size: 1.2em;
+  padding: 3%;
+  text-shadow: 5px 5px 0 rgba(0, 0, 0, 0.5);
+  -webkit-text-stroke: 5px 5px rgba(0, 0, 0, 0.5);
+  -moz-text-stroke: 5px 5px rgba(0, 0, 0, 0.5);
+  -ms-text-stroke: 5px 5px rgba(0, 0, 0, 0.5);
+  display: block;
+}
+#nonograms #difficulty-select .restore {
+  float: right;
+}
+#nonograms #difficulty-select h2 {
+  clear: both;
+}
+#nonograms #difficulty-select .easy,
+#nonograms #difficulty-select .medium,
+#nonograms #difficulty-select .hard,
+#nonograms #difficulty-select .random {
+  width: 80%;
+  height: 12%;
+  line-height: 1;
+  font-size: 2.2em;
+  text-align: center;
+}
+#nonograms #level-select .back {
+  width: 40%;
+}
+#nonograms #level-select .previous {
+  float: left;
+  margin-top: 25%;
+}
+#nonograms #level-select .next {
+  float: right;
+  margin-top: 25%;
+}
+#nonograms #level-select h2 {
+  clear: left;
+}
+#nonograms #level-select .preview {
+  width: 60%;
+  height: 40%;
+  overflow: hidden;
+  margin: 0 auto;
+  border: 5px solid #000;
+  background: #fff;
+  box-shadow: 5px 5px 0 rgba(0, 0, 0, 0.5);
+}
+#nonograms #level-select .preview .complete {
+  height: 100%;
+}
+#nonograms #level-select .preview .complete div {
+  width: 10%;
+  height: 10%;
+  /*border-right: 1px solid #000; border-bottom: 1px solid #000;*/
+  float: left;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  -ms-box-sizing: border-box;
+  box-sizing: border-box;
+}
+#nonograms #level-select .preview .complete div.filled {
+  background: #333;
+}
+#nonograms #level-select .preview .incomplete {
+  font-size: 8em;
+  line-height: 1.3;
+  width: 100%;
+  height: 100%;
+  color: #000;
+  position: relative;
+  left: 5%;
+}
+#nonograms #level-select ul.info {
+  margin: 1.5% 0;
+  font-size: 1.2em;
+}
+#nonograms #level-select ul.info li {
+  text-shadow: 5px 5px 0 rgba(0, 0, 0, 0.5);
+  -webkit-text-stroke: 5px 5px rgba(0, 0, 0, 0.5);
+  -moz-text-stroke: 5px 5px rgba(0, 0, 0, 0.5);
+  -ms-text-stroke: 5px 5px rgba(0, 0, 0, 0.5);
+}
+#nonograms.landscape .scene {
+  background-size: contain;
+}
+#nonograms.landscape .button {
+  width: 35%;
+  height: 15%;
+}
+#nonograms.landscape .button.small {
+  width: 25%;
+  height: 11%;
+  font-size: 1em;
+  line-height: 1;
+}
+#nonograms.landscape .button.back {
+  float: left;
+  width: 20%;
+  font-size: 1em;
+  line-height: 1;
+}
+#nonograms.landscape .button.previous,
+#nonograms.landscape .button.next {
+  width: 10%;
+}
+#nonograms.landscape .dialog-box {
+  padding: 1%;
+  width: 50%;
+}
+#nonograms.landscape .dialog-box h3 {
+  font-size: 1.3em;
+}
+#nonograms.landscape .dialog-box .button {
+  width: auto;
+  margin-top: 3%;
+  line-height: 1.1;
+}
+#nonograms.landscape #title h1 {
+  font-size: 4em;
+  line-height: 1;
+  margin: 3% 0;
+}
+#nonograms.landscape #title .button {
+  width: 45%;
+  height: 15%;
+  margin: 2%;
+}
+#nonograms.landscape #title .copyright {
+  margin-top: 0%;
+}
+#nonograms.landscape #about h2 {
+  margin: 1%;
+  padding-top: 0;
+}
+#nonograms.landscape #about p {
+  font-size: 1em;
+  padding: 3%;
+  width: 40%;
+  display: inline-block;
+  vertical-align: top;
+}
+#nonograms.landscape #about .button {
+  display: inline-block;
+  margin: 3% 6%;
+}
+#nonograms.landscape #about .reset {
+  font-size: 1.5em;
+  line-height: 1;
+}
+#nonograms.landscape #difficulty-select h2 {
+  margin-bottom: 0;
+  padding-top: 0;
+}
+#nonograms.landscape #difficulty-select .easy,
+#nonograms.landscape #difficulty-select .medium,
+#nonograms.landscape #difficulty-select .hard,
+#nonograms.landscape #difficulty-select .random {
+  width: 40%;
+  height: 25%;
+  line-height: 1.5;
+  font-size: 2.4em;
+}
+#nonograms.landscape #level-select .back {
+  width: 25%;
+}
+#nonograms.landscape #level-select .play {
+  float: left;
+  margin: 3% 0 0 1.5%;
+}
+#nonograms.landscape #level-select h2 {
+  padding: 0;
+  float: left;
+  margin: 3% 0 0 1.5%;
+}
+#nonograms.landscape #level-select ul.info {
+  margin: 0 0 0 1.5%;
+  float: left;
+  text-align: left;
+  width: 54%;
+}
+#nonograms.landscape #level-select .previous {
+  float: left;
+  margin-top: -7%;
+  margin-left: 7%;
+  width: 10%;
+  height: 14%;
+}
+#nonograms.landscape #level-select .next {
+  float: right;
+  margin-top: -7%;
+  margin-right: 2%;
+  width: 10%;
+  height: 14%;
+}
+#nonograms.landscape #level-select .previous,
+#nonograms.landscape #level-select .next {
+  line-height: 2;
+  font-size: 0.8em;
+}
+#nonograms.landscape #level-select .preview {
+  width: 40%;
+  height: 60%;
+  float: right;
+  margin: 4% 1.5% 0 0;
+  position: relative;
+}
+#nonograms.landscape #game .actions {
+  width: 100%;
+}
+#nonograms.landscape #game .actions.pause {
+  height: 20%;
+  margin-bottom: 0;
+}
+#nonograms.landscape #game .actions.pause .text {
+  -webkit-transform: none;
+  -moz-transform: none;
+  transform: none;
+  margin: 0;
+  line-height: 0.9;
+}
+#nonograms.landscape #game .actions.mark,
+#nonograms.landscape #game .actions.fill {
+  width: 100%;
+  height: 40%;
+  display: block;
+  margin-bottom: 3%;
+}
+#nonograms.landscape #game .actions.mark .text,
+#nonograms.landscape #game .actions.fill .text {
+  height: 100%;
+  line-height: 1;
+  text-align: left;
+}
+#nonograms.landscape #game .actions.mark .text .icon,
+#nonograms.landscape #game .actions.fill .text .icon {
+  width: 18%;
+  height: 80%;
+  vertical-align: -12%;
+  margin-left: 16%;
+}
+#nonograms.landscape #game .info {
+  margin-bottom: 0;
+  width: 100%;
+  height: 38%;
+}
+#nonograms.landscape #game .info.complete {
+  font-size: 0.9em;
+}
+#nonograms.landscape #game .info.complete .percentage {
+  font-size: 3em;
+  line-height: 0.5;
+  padding: 8%;
+}
+#nonograms.landscape #game .info.timer {
+  font-size: 1.6em;
+  padding-top: 0;
+}
+#nonograms.landscape #game .info.timer span {
+  font-size: 1em;
+}
+#nonograms.landscape #game .info.timer .seconds {
+  width: 23%;
+}
+#nonograms.landscape #game .top {
+  width: 32%;
+  height: 66%;
+  float: left;
+  margin: 0.5% 2% 1% 0;
+}
+#nonograms.landscape #game .grid-background {
+  float: right;
+}
+#nonograms.landscape #game .bottom {
+  width: 32%;
+  height: 34%;
+  float: left;
+  margin-right: 2%;
+}
+/* Slightly smaller borders on hidpi mobile devices */
+@media screen and (-webkit-min-device-pixel-ratio: 2) {
+  #nonograms .button {
+    border-width: 3px;
+  }
+  #nonograms .button span {
+    border-width: 3px;
+  }
+  #nonograms #game .actions.pause .text {
+    margin-top: 90%;
+  }
+}
+/* iPhone/iPod Touch */
+@media screen and (min-device-width: 320px) and (max-device-width: 480px) {
+  #nonograms {
+    background-image: url('../images/iphone-startup-portrait.png');
+    background-size: auto;
+  }
+}
+/* iPhone/iPod Touch (Retina) */
+@media screen and (min-device-width: 320px) and (max-device-width: 480px) and (-webkit-min-device-pixel-ratio: 2) {
+  #nonograms {
+    background-image: url('../images/iphone-startup-portrait@2x.png');
+    background-size: contain;
+  }
+  #nonograms .scene {
+    background-image: url('../images/background@2x.png');
+    background-size: contain;
+  }
+}
+/* iPad */
+@media screen and (min-device-width: 768px) and (max-device-width: 1024px) {
+  #nonograms {
+    background-image: url('../images/ipad-startup-portrait.png');
+    background-size: auto;
+  }
+  #nonograms.landscape {
+    background-image: url('../images/ipad-startup-landscape.png');
+  }
+  #nonograms .scene {
+    background-image: url('../images/background-ipad.png');
+  }
+}
+/* iPad (Retina) */
+@media screen and (min-device-width: 768px) and (max-device-width: 1024px) and (-webkit-min-device-pixel-ratio: 2) {
+  #nonograms {
+    background-image: url('../images/ipad-startup-portrait@2x.png');
+    background-size: contain;
+  }
+  #nonograms.landscape {
+    background-image: url('../images/ipad-startup-landscape@2x.png');
+    background-size: contain;
+  }
+  #nonograms .scene {
+    background-image: url('../images/background-ipad@2x.png');
+    background-size: contain;
+  }
+}
+/* Additional tablet/desktop styles */
+@media screen and (min-device-width: 769px) {
+  #nonograms .scene {
+    background-image: url('../images/background@2x.png');
+  }
+  #nonograms .scene * {
+    cursor: url('../images/cursor.cur'), default;
+  }
+}
