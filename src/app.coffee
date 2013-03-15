@@ -61,6 +61,7 @@ define [
 			for id, scene of @scenes
 				scene.on 'scene:change', @changeScene
 				scene.on 'sfx:play', @playSfx
+				scene.on 'vfx:play', @playVfx
 				scene.on 'music:play', @playMusic
 				scene.on 'music:stop', @stopMusic
 
@@ -143,6 +144,15 @@ define [
 			@music[@currentMusic].stop()
 
 			@currentMusic = null
+
+		###
+		@description Does some sort of visual effect on the whole screen (flash, shake, etc.)
+		###
+		playVfx: (type) ->
+			@el.addClass type
+			_.delay =>
+				@el.removeClass type
+			, 250
 
 		###
 		@description Enforces an universal aspect ratio for different screen sizes; called on init, window resize, and orientation change
