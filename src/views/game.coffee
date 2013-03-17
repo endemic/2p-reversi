@@ -16,7 +16,7 @@ define [
 				events = 
 					'touchstart .new': 'reset'
 					'touchstart .back': 'back'
-					'touchstart .board > div': 'move'
+					'touchend .board > div': 'move'
 			else
 				events = 
 					'click .new': 'reset'
@@ -96,23 +96,67 @@ define [
 						# Set the new color
 						piece.data 'color', @currentPlayer
 
+			previousPlayer = @currentPlayer
+
 			# Swap turn
 			if @currentPlayer is "black" then @currentPlayer = "white" else @currentPlayer = "black"
 
-			# Update the "count" display - this is brute force for now
-			blackCount = 0
-			whiteCount = 0
-			$('.piece', @elem).each ->
-				if $(@).data('color') is 'black' then blackCount += 1
-				else whiteCount += 1
-
-			$('.black.count', @elem).html blackCount
-			$('.white.count', @elem).html whiteCount
-
+			# Randomly just keeping track of how many rounds are played
 			@turns += 1
 
-		checkWinCondition: ->
-			console.log "Winning!"
+			@updateScore()
+
+			# Determine if there's a win condition
+			validMoves = @canPlay @currentPlayer
+
+			# Show a hint
+			@board.children('div').removeClass 'hint'
+			validMoves.forEach (square) =>
+				@board.children('div').eq(square).addClass 'hint'
+
+			# Check to see if the next player can actually move
+			if validMoves.length is 0
+				# Check whether the other player can play again
+				# If not, the game is over
+				if @canPlay(previousPlayer).length is 0
+					winnner = if @blackCount > @whiteCount then 'Black Wins!' else 'White Wins!'
+					if @blackCount == @whiteCount then winner = 'Tie Game!'
+					alert "Game Over! #{winner}"
+				else
+					# If they can, then show a message saying that the current player's turn was skipped
+					alert "#{@currentPlayer} can't play, switching to #{previousPlayer}"
+					@currentPlayer = previousPlayer
+
+		###
+		Update the piece count
+		###
+		updateScore: ->
+			# Update the "count" display - this is brute force for now
+			@blackCount = 0
+			@whiteCount = 0
+			$('.piece', @elem).each ->
+				if $(@).data('color') is 'black' then @blackCount += 1
+				else @whiteCount += 1
+
+			$('.black.count', @elem).html @blackCount
+			$('.white.count', @elem).html @whiteCount
+
+		###
+		Checks whether or not there's a valid move anywhere for a particular player
+		###
+		canPlay: (color) ->
+			# Cycle through board squares
+			# If square is "open," check if it's a valid move for the specified color
+			squares = @board.children('div')
+			validSquares = []
+
+			_.each squares, (square, i) =>
+				# If already a piece in the square, potential move is invalid
+				if $(square).children('piece').length > 0 then return
+
+				if @validate i, color then validSquares.push i
+
+			return validSquares
 
 		###
 		Valid moves must be next to at least one piece of the opposite color in one of 8 directions;
@@ -136,7 +180,7 @@ define [
 			downLeft = @validateLowerLeft index, color
 			downRight = @validateLowerRight index, color
 
-			console.log [ left, upLeft, up, upRight, right, downRight, down, downLeft ]
+			# console.log [ left, upLeft, up, upRight, right, downRight, down, downLeft ]
 
 			if not left and not upLeft and not up and not upRight and not right and not downRight and not down and not downLeft
 				return false
@@ -226,8 +270,9 @@ define [
 		###
 		validateUp: (index, color) ->
 			squares = @board.children('div')
+			topBorder = index % 8
 			# If too close to the top of the board, automatically return false
-			if index - 8 <= 0 then return false
+			if index - 8 <= topBorder then return false
 
 			piece = squares.eq(index - 8).children('.piece')
 			# Check to see if the first square to the top exists, and is a different color
@@ -235,7 +280,7 @@ define [
 
 			# Now, search for a piece of the same color
 			i = index - 16
-			j = 0
+			j = topBorder
 			captured = [index - 8]
 
 			while i >= j
@@ -262,7 +307,7 @@ define [
 		###
 		validateDown: (index, color) ->
 			squares = @board.children('div')
-			bottomBorder = 63 - index % 8 # TODO: This is not correct
+			bottomBorder = 56 + index % 8
 
 			# If too close to the bottom border of the board, automatically return false
 			if index + 8 >= bottomBorder then return false

@@ -125,7 +125,8 @@ body { font-size: 62.5%; background: #000; }
 	#game { background: #ccc;
 			.board { width: 66%; height: 100%; background: green; border-bottom: 1px solid #000; border-right: 1px solid #000;
 				/* Board squares */
-				& > div { width: 12.5%; height: 12.5%; float:left; .border-box; border-top: 1px solid #000; border-left: 1px solid #000; -webkit-perspective: 1000; perspective: 1000; /* Not sure if this should be here or not */
+				& > div { width: 12.5%; height: 12.5%; float:left; .border-box; border-top: 1px solid #000; border-left: 1px solid #000; -webkit-transition: background-color 1s; -webkit-perspective: 1000; perspective: 1000; /* Not sure if this should be here or not */
+					&.hint { background: rgba(200, 0, 0, 0.5); }
 
 					/* Pieces */
 					.piece { position: relative; width: 90%; height: 90%; margin: 5%; -webkit-transform-style: preserve-3d; transform-style: preserve-3d;
