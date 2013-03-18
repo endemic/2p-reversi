@@ -96,15 +96,15 @@ define [
 						# Set the new color
 						piece.data 'color', @currentPlayer
 
-			previousPlayer = @currentPlayer
-
-			# Swap turn
-			if @currentPlayer is "black" then @currentPlayer = "white" else @currentPlayer = "black"
+			@updateScore()
 
 			# Randomly just keeping track of how many rounds are played
 			@turns += 1
 
-			@updateScore()
+			previousPlayer = @currentPlayer
+
+			# Swap turn
+			if @currentPlayer is "black" then @currentPlayer = "white" else @currentPlayer = "black"
 
 			# Determine if there's a win condition
 			validMoves = @canPlay @currentPlayer
@@ -134,8 +134,8 @@ define [
 			# Update the "count" display - this is brute force for now
 			@blackCount = 0
 			@whiteCount = 0
-			$('.piece', @elem).each ->
-				if $(@).data('color') is 'black' then @blackCount += 1
+			$('.piece', @elem).each (i, element) =>
+				if $(element).data('color') is 'black' then @blackCount += 1
 				else @whiteCount += 1
 
 			$('.black.count', @elem).html @blackCount
@@ -147,12 +147,11 @@ define [
 		canPlay: (color) ->
 			# Cycle through board squares
 			# If square is "open," check if it's a valid move for the specified color
-			squares = @board.children('div')
 			validSquares = []
 
-			_.each squares, (square, i) =>
+			@board.children('div').each (i, square) =>
 				# If already a piece in the square, potential move is invalid
-				if $(square).children('piece').length > 0 then return
+				if $(square).children('.piece').length > 0 then return
 
 				if @validate i, color then validSquares.push i
 
