@@ -56,11 +56,15 @@ define [
 			# Where we append the piece
 			square = $(e.target)
 
+			# Don't allow nested piece placement
+			# if not square.data('index') then return
+			if square.hasClass('square') is false then square = square.parents('.square')
+
 			# Only allow one piece per spot on the game board
 			if square.children('.piece').length > 0 then return
 
-			# Don't allow nested piece placement
-			if not square.data('index') then return
+			# Remove any hints
+			square.children('.hint').remove()
 
 			# Find the index of the current piece
 			index = parseInt square.data('index'), 10
@@ -110,9 +114,10 @@ define [
 			validMoves = @canPlay @currentPlayer
 
 			# Show a hint
-			@board.children('div').removeClass 'hint'
+			$('.hint').hide()
+			children = @board.children('div')
 			validMoves.forEach (square) =>
-				@board.children('div').eq(square).addClass 'hint'
+				children.eq(square).children('.hint').show()
 
 			# Check to see if the next player can actually move
 			if validMoves.length is 0
@@ -499,22 +504,22 @@ define [
 		resize: (width, height, orientation) ->
 			# Use Math.floor here to ensure the grid doesn't round up to be larger than width/height of container
 			if orientation is 'landscape'
-				width = Math.round(height * 0.95 / 8) * 8 	# Make sure grid background size is 95% of viewport and an even multiple of 8
-				@board.width width
-				@board.height width
+				boardWidth = Math.round(height * 0.95 / 8) * 8 	# Make sure grid background size is 95% of viewport and an even multiple of 8
+				@board.width boardWidth
+				@board.height boardWidth
 
 				# Add some margin to the board, so it appears centered
-				margin = (height - width) / 2
+				margin = (height - boardWidth) / 2
 				@board.css
 					'margin': "#{margin}px 0"
 
 			else if orientation is 'portrait'
-				width = Math.round(width * 0.95 / 8) * 8	# grid size is 95% of viewport and an even multiple of 8
-				@board.width width
-				@board.height width
+				boardWidth = Math.round(width * 0.95 / 8) * 8	# grid size is 95% of viewport and an even multiple of 8
+				@board.width boardWidth
+				@board.height boardWidth
 
 				# Add some margin to the board, so it appears centered
-				margin = (width - height) / 2
+				margin = (width - boardWidth) / 2
 				@board.css
 					'margin': "0 #{margin}px"
 
@@ -524,8 +529,11 @@ define [
 			@currentPlayer = "black"
 
 			# Add an "index" value to each board square
-			@board.children('div').each (i, element)->
-				$(element).data 'index', i
+			@board.children('div').each (i, element) ->
+				e = $(element)
+				e.data 'index', i
+				e.addClass 'square'
+				e.append '<div class="hint"></div>'
 
 			# Remove existing pieces
 			@elem.find('.piece').remove()

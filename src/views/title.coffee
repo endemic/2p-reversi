@@ -13,20 +13,22 @@ define [
 			# Determine whether touchscreen or desktop
 			if Env.mobile
 				events =
-					'touchstart .about': 'about'
+					'touchstart .button': 'navigation'
 			else
 				events =
-					'click .about': 'about'
+					'click .button': 'navigation'
 
 		initialize: ->
 			@elem = $(template)
 			@render()
 
-		about: (e) ->
+		navigation: (e) ->
 			e.preventDefault()
 
 			# Don't allow button to be activated more than once
 			@undelegateEvents()
 
+			view = $(e.target).data('view')
+
 			@trigger 'sfx:play', 'button'
-			@trigger 'scene:change', 'about'
+			@trigger 'scene:change', view

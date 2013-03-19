@@ -27,6 +27,16 @@
 	box-sizing: border-box;
 }
 
+@-webkit-keyframes rotate {
+	0% { -webkit-transform: rotate(0deg); }
+	100% { -webkit-transform: rotate(360deg); }
+}
+
+@-moz-keyframes rotate {
+	0% { -moz-transform: rotate(0deg); }
+	100% { -moz-transform: rotate(360deg); }
+}
+
 @-webkit-keyframes spaceboots {
 	0% { -webkit-transform: translate(2px, 1px) rotate(0deg); }
 	10% { -webkit-transform: translate(-1px, -2px) rotate(-1deg); }
@@ -112,8 +122,8 @@ body { font-size: 62.5%; background: #000; }
 		}
 	}
 
-	#title { 
-		h1 { font-size: 3em; margin-top: 10%; }
+	#title { background: url('../images/low_contrast_linen.png');
+		h1 { font-size: 4em; margin-top: 10%; text-shadow: 0 4px 9px rgba(0,0,0,0.8); }
 		.copyright { margin-top: 18%; }
 	}
 
@@ -122,24 +132,30 @@ body { font-size: 62.5%; background: #000; }
 		p { font-size: 1.1em; padding: 1%; } 
 	}
 
-	#game { background: #ccc;
-			.board { width: 66%; height: 100%; background: green; border-bottom: 1px solid #000; border-right: 1px solid #000;
+	#game { background: url('../images/escheresque_ste.png');
+			.board { width: 100%; height: 66%; background: #3fa757; border-bottom: 1px solid #000; border-right: 1px solid #000; box-shadow: 0 4px 9px rgba(0,0,0,0.8);
 				/* Board squares */
 				& > div { width: 12.5%; height: 12.5%; float:left; .border-box; border-top: 1px solid #000; border-left: 1px solid #000; -webkit-transition: background-color 1s; -webkit-perspective: 1000; perspective: 1000; /* Not sure if this should be here or not */
 					&.hint { background: rgba(200, 0, 0, 0.5); }
 
 					/* Pieces */
 					.piece { position: relative; width: 90%; height: 90%; margin: 5%; -webkit-transform-style: preserve-3d; transform-style: preserve-3d;
-						.white, .black { position: absolute; top: 0; left: 0; width: 100%; height: 100%; box-shadow: 0 0 5px rgba(0, 0, 0, 0.5); border-radius: 50%; display: block; .border-box; -webkit-backface-visibility: hidden; backface-visibility: hidden; }
+						.white, .black { position: absolute; top: 0; left: 0; width: 100%; height: 100%; box-shadow: 0 3px 5px rgba(0, 0, 0, 0.7); border-radius: 50%; display: block; .border-box; -webkit-backface-visibility: hidden; backface-visibility: hidden; }
 
-						.white { background: #fff; color: #333; border: 1px solid #000; z-index: 1; }
-						.black { background: #333; color: #fff; border: 1px solid #fff; -webkit-transform: rotateY(180deg); -moz-transform: rotateY(180deg); transform: rotateY(180deg); }
+						.white { background: url('../images/white-piece-background.png') center center no-repeat; background-size: cover; border: 1px solid #000; z-index: 1; }
+						.black { background: url('../images/black-piece-background.png') center center no-repeat; background-size: cover; border: 1px solid #fff; -webkit-transform: rotateY(180deg); -moz-transform: rotateY(180deg); transform: rotateY(180deg); }
 					}
+
+					.hint { display: none; border: 5px dotted yellow; width: 90%; height: 90%; border-radius: 50%; margin: 5%; box-sizing: border-box; -webkit-animation: rotate 25s linear 0s infinite; -moz-animation: rotate 25s linear 0s infinite; }
 				}
 			}
 
-			.info {
-				p { display: inline-block; }
+			.info { height: 33%; width: 100%;
+				div { display: inline-block; width: 47%; height: 50%; margin: 1%; .border-box; font-size: 2em; box-shadow: 0 4px 9px rgba(0,0,0,0.8);
+					&.black { background: #000; color: #fff; border: 5px solid white; }
+					&.white { background: #fff; color: #000; border: 5px solid black; }
+					span { display: block; line-height: 0.4; }
+				}
 			}
 		}
 
