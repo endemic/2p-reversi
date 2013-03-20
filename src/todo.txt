@@ -1,1 +1,5 @@
-[ ] Downwards validation wonky
+[ ] Replace end turn/game alerts with modal popups
+[ ] Remove "hint" display unless player tries to make two incorrect moves
+[ ] Stagger the "flip" animation of captured pieces
+[ ] Add a "countdown" type effect to the scoring numbers
+[ ] Add some simple sound effects

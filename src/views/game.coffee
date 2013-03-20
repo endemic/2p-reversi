@@ -14,13 +14,11 @@ define [
 			# Determine whether touchscreen or desktop
 			if Env.mobile
 				events = 
-					'touchstart .new': 'reset'
-					'touchstart .back': 'back'
+					'touchend .quit': 'quit'
 					'touchend .board > div': 'move'
 			else
 				events = 
-					'click .new': 'reset'
-					'click .back': 'back'
+					'click .quit': 'quit'
 					'click .board > div': 'move'
 
 		initialize: ->
@@ -40,14 +38,22 @@ define [
 
 			@render()
 
-		back: (e) ->
+		quit: (e) ->
 			e.preventDefault()
 
-			# Don't allow button to be activated more than once
-			@undelegateEvents()
-			
 			@trigger 'sfx:play', 'button'
-			@trigger 'scene:change', 'title'
+
+			@modal.show
+				'title': 'Are you sure?'
+				'buttons': [
+					{
+						'text': 'Yes, quit'
+						'callback': =>
+							@trigger 'scene:change', 'title'
+					}, {
+						'text': 'No, keep playing'
+					}
+				]
 
 		###
 		@description Place a piece
@@ -73,7 +79,11 @@ define [
 			captured = @validate index, @currentPlayer
 
 			if captured is false
-				@trigger 'vfx:play', 'shake'
+				# @trigger 'vfx:play', 'shake'
+				@board.addClass 'shake'
+				_.delay =>
+					@board.removeClass 'shake'
+				, 500
 				return
 
 			# Otherwise, place the piece and flip captured pieces
@@ -82,6 +92,9 @@ define [
 			piece = $('<div class="piece"><div class="white"></div><div class="black"></div>').data('color', 'white')
 
 			square.append piece
+
+			# Animate into view
+			piece.animate { 'opacity': 1 }, 200
 
 			# Flip to black if necessary - TODO: use "animate" so vendor prefixes are automatically added
 			if @currentPlayer is 'black' then piece.css({ '-webkit-transform': 'rotateY(180deg)' }).data('color', 'black')
@@ -124,12 +137,12 @@ define [
 				# Check whether the other player can play again
 				# If not, the game is over
 				if @canPlay(previousPlayer).length is 0
-					winnner = if @blackCount > @whiteCount then 'Black Wins!' else 'White Wins!'
+					if @blackCount > @whiteCount then winnner = 'Black Wins!' else winnner = 'White Wins!'
 					if @blackCount == @whiteCount then winner = 'Tie Game!'
 					alert "Game Over! #{winner}"
 				else
 					# If they can, then show a message saying that the current player's turn was skipped
-					alert "#{@currentPlayer} can't play, switching to #{previousPlayer}"
+					alert "#{@currentPlayer} can't play; it's #{previousPlayer}'s turn."
 					@currentPlayer = previousPlayer
 
 		###
@@ -143,8 +156,8 @@ define [
 				if $(element).data('color') is 'black' then @blackCount += 1
 				else @whiteCount += 1
 
-			$('.black.count', @elem).html @blackCount
-			$('.white.count', @elem).html @whiteCount
+			$('.black .count', @elem).html @blackCount
+			$('.white .count', @elem).html @whiteCount
 
 		###
 		Checks whether or not there's a valid move anywhere for a particular player
@@ -508,25 +521,41 @@ define [
 				@board.width boardWidth
 				@board.height boardWidth
 
+				# Also resize the info pane so it's the same size as the board (for aesthetic purposes)
+				$('.info', @elem).height boardWidth
+
 				# Add some margin to the board, so it appears centered
 				margin = (height - boardWidth) / 2
-				@board.css
-					'margin': "#{margin}px 0"
+				@board.css { 'margin': "#{margin}px 0" }
+				$('.info', @elem).css { 'margin': "#{margin}px 0" }
 
 			else if orientation is 'portrait'
 				boardWidth = Math.round(width * 0.95 / 8) * 8	# grid size is 95% of viewport and an even multiple of 8
 				@board.width boardWidth
 				@board.height boardWidth
 
+				# Also resize the info pane so it's the same size as the board (for aesthetic purposes)
+				$('.info', @elem).width boardWidth
+
 				# Add some margin to the board, so it appears centered
 				margin = (width - boardWidth) / 2
-				@board.css
-					'margin': "0 #{margin}px"
+				@board.css { 'margin': "0 #{margin}px" }
+				$('.info', @elem).css { 'margin': "0 #{margin}px" }
 
 		show: (duration = 500, callback) ->
 			super duration, callback
 
 			@currentPlayer = "black"
+
+			# Remove existing pieces
+			$('.piece', @elem).remove()
+
+			# Remove existing hints
+			$('.hint', @elem).remove()
+
+			@updateScore()
+
+			@turns = 0
 
 			# Add an "index" value to each board square
 			@board.children('div').each (i, element) ->
@@ -534,9 +563,6 @@ define [
 				e.data 'index', i
 				e.addClass 'square'
 				e.append '<div class="hint"></div>'
-
-			# Remove existing pieces
-			@elem.find('.piece').remove()
 
 			# Read previous game moves
 
