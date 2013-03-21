@@ -128,13 +128,13 @@ body { font-size: 62.5%; background: #000; }
 	}
 
 	#title { background: url('../images/low_contrast_linen.png');
-		h1 { font-size: 4em; margin-top: 10%; text-shadow: 0 4px 9px rgba(0,0,0,0.8); }
-		.copyright { margin-top: 18%; }
+		h1 { font-size: 4em; margin-top: 10%; padding: 1%; text-shadow: 0 4px 9px rgba(0,0,0,0.8); background: url('../images/baize-background.png') #3fa757; border: 10px solid black; box-shadow: 0 4px 9px rgba(0,0,0,0.8); .border-box; }
+		.copyright { margin-top: 40%; text-shadow: 0 4px 9px rgba(0,0,0,0.8); }
 	}
 
-	#about { color: #fff; 
-		h2 { clear: left; padding-top: 3%; }
-		p { font-size: 1.1em; padding: 1%; } 
+	#about { background: url('../images/low_contrast_linen.png');
+		h2 { clear: left; padding-top: 3%; text-shadow: 0 4px 9px rgba(0,0,0,0.8); }
+		p { font-size: 1.1em; padding: 1%; text-shadow: 0 4px 9px rgba(0,0,0,0.8); text-align: left; } 
 	}
 
 	#game { background: url('../images/low_contrast_linen.png');
@@ -156,8 +156,9 @@ body { font-size: 62.5%; background: #000; }
 			}
 
 			.info { height: 33%; width: 100%;
-				.black, .white { display: inline-block; width: 47%; height: 50%; margin: 1%; .border-box; font-size: 2em; box-shadow: 0 4px 9px rgba(0,0,0,0.8);
+				.black, .white { display: inline-block; width: 47%; height: 50%; margin: 1%; .border-box; font-size: 2em; box-shadow: 0 4px 9px rgba(0,0,0,0.8); position: relative;
 					span { display: block; line-height: 0.4; }
+					&.turn:before { content: '★'; font-size: 0.4em; position: absolute; margin: 15% 0 0 1%; color: gold; text-shadow: 0 0 5px #000;  }
 				}
 				.black, .button { background: #000; color: #fff; border: 5px solid white; }
 				.white { background: #fff; color: #000; border: 5px solid black; }
@@ -186,14 +187,12 @@ body { font-size: 62.5%; background: #000; }
 			nav { 
 				button { width: 45%; margin: 2%; }
 			}
-			.copyright { margin-top: 5%; }
+			.copyright { margin-top: 20%; }
 		}
 
 		#about {
 			h2 { margin: 1%; padding-top: 0; }
-			p { font-size: 1em; padding: 1%; width: 44%;
-				&:last-child { width: 94%; }
-			}
+			p { font-size: 1em; line-height: 2; padding: 1% 0 1% 10%; }
 		}
 
 		#game {

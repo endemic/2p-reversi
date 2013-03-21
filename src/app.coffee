@@ -69,7 +69,7 @@ define [
 				scene.hide 0
 
 			# Set "active" scene
-			@activeScene = @scenes.game
+			@activeScene = @scenes.title
 
 			# Do an initial resize of the content area to ensure a 2:3 ratio
 			@resize()

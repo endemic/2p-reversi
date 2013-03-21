@@ -15,11 +15,9 @@ define [
 			if Env.mobile
 				events =
 					'touchstart .back': 'back' 
-					'touchstart .showModal': 'showModal'
 			else
 				events =
 					'click .back': 'back' 
-					'click .showModal': 'showModal'
 
 		initialize: ->
 			@elem = $(template)

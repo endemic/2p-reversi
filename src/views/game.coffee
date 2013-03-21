@@ -51,7 +51,7 @@ define [
 						'callback': =>
 							@trigger 'scene:change', 'title'
 					}, {
-						'text': 'No, keep playing'
+						'text': 'No, play'
 					}
 				]
 
@@ -69,7 +69,7 @@ define [
 			# Only allow one piece per spot on the game board
 			if square.children('.piece').length > 0 then return
 
-			# Remove any hints
+			# Remove the hint in the square the user is trying to play on
 			square.children('.hint').remove()
 
 			# Find the index of the current piece
@@ -80,11 +80,25 @@ define [
 
 			if captured is false
 				# @trigger 'vfx:play', 'shake'
+				@incorrect += 1
+
+				# Show a hint if the player tries to play in a bad spot more than 2 times
+				if @incorrect > 1
+					validMoves = @canPlay @currentPlayer
+
+					# Show a hint
+					children = @board.children('div')
+					validMoves.forEach (square) =>
+						children.eq(square).children('.hint').show()
+
 				@board.addClass 'shake'
 				_.delay =>
 					@board.removeClass 'shake'
 				, 500
 				return
+
+			# Hide hints if move was successful
+			$('.hint').hide()
 
 			# Otherwise, place the piece and flip captured pieces
 
@@ -97,7 +111,7 @@ define [
 			piece.animate { 'opacity': 1 }, 200
 
 			# Flip to black if necessary - TODO: use "animate" so vendor prefixes are automatically added
-			if @currentPlayer is 'black' then piece.css({ '-webkit-transform': 'rotateY(180deg)' }).data('color', 'black')
+			if @currentPlayer is 'black' then piece.animate({ 'rotateY': '180deg' }).data('color', 'black')
 
 			# Flip captured pieces
 			captured.forEach (group, i) =>
@@ -107,9 +121,9 @@ define [
 						# Determine when to rotate to 180deg (black) and when to rotate to 0deg (white)
 						# TODO: Slightly delay the flip of each piece
 						if piece.data('color') is 'white'
-							piece.animate { '-webkit-transform': 'rotateY(180deg)' }, 250, 'ease-in-out'
+							piece.animate { 'rotateY': '180deg' }, 250
 						else
-							piece.animate { '-webkit-transform': 'rotateY(0deg)' }, 250, 'ease-in-out'
+							piece.animate { 'rotateY': '0deg' }, 250
 						# Set the new color
 						piece.data 'color', @currentPlayer
 
@@ -117,7 +131,7 @@ define [
 
 			# Randomly just keeping track of how many rounds are played
 			@turns += 1
-
+			@incorrect = 0
 			previousPlayer = @currentPlayer
 
 			# Swap turn
@@ -126,24 +140,41 @@ define [
 			# Determine if there's a win condition
 			validMoves = @canPlay @currentPlayer
 
-			# Show a hint
-			$('.hint').hide()
-			children = @board.children('div')
-			validMoves.forEach (square) =>
-				children.eq(square).children('.hint').show()
-
 			# Check to see if the next player can actually move
 			if validMoves.length is 0
 				# Check whether the other player can play again
 				# If not, the game is over
 				if @canPlay(previousPlayer).length is 0
-					if @blackCount > @whiteCount then winnner = 'Black Wins!' else winnner = 'White Wins!'
-					if @blackCount == @whiteCount then winner = 'Tie Game!'
-					alert "Game Over! #{winner}"
+					if @blackCount > @whiteCount
+						winner = 'Black Wins!'
+					else if @whiteCount > @blackCount
+						winnner = 'White Wins!'
+					else
+						winnner = 'Tie Game!'
+
+					@modal.show
+						'title': "Game Over! #{winner}"
+						'buttons': [
+							{
+								'text': 'Play Again'
+								'callback': =>
+									@reset()
+							}, {
+								'text': 'Quit'
+								'callback': =>
+									@trigger 'scene:change', 'title'
+							}
+						]
 				else
 					# If they can, then show a message saying that the current player's turn was skipped
-					alert "#{@currentPlayer} can't play; it's #{previousPlayer}'s turn."
+					@modal.show
+						'title': "#{@currentPlayer} can't play, so it's #{previousPlayer}'s turn."
+						'buttons': [{'text': 'OK'} ]
 					@currentPlayer = previousPlayer
+
+			# Highlight the current player's score box
+			$(".info > div", this.elem).removeClass 'turn'
+			$(".info .#{@currentPlayer}", this.elem).addClass 'turn'
 
 		###
 		Update the piece count
@@ -511,8 +542,28 @@ define [
 		@description Remove existing pieces, and reset the game
 		###
 		reset: ->
-			@elem.find('.piece').remove()
+			@currentPlayer = "black"
+
+			$(".info > div", this.elem).removeClass 'turn'
+			$(".info .#{@currentPlayer}", this.elem).addClass 'turn'
+
+			# Remove existing pieces
+			$('.piece', @elem).remove()
+
+			# Remove existing hints
+			$('.hint', @elem).remove()
+
+			@updateScore()
+
 			@turns = 0
+			@incorrect = 0
+
+			# Add an "index" value to each board square
+			@board.children('div').each (i, element) ->
+				e = $(element)
+				e.data 'index', i
+				e.addClass 'square'
+				e.append '<div class="hint"></div>'
 
 		resize: (width, height, orientation) ->
 			# Use Math.floor here to ensure the grid doesn't round up to be larger than width/height of container
@@ -545,24 +596,7 @@ define [
 		show: (duration = 500, callback) ->
 			super duration, callback
 
-			@currentPlayer = "black"
-
-			# Remove existing pieces
-			$('.piece', @elem).remove()
-
-			# Remove existing hints
-			$('.hint', @elem).remove()
-
-			@updateScore()
-
-			@turns = 0
-
-			# Add an "index" value to each board square
-			@board.children('div').each (i, element) ->
-				e = $(element)
-				e.data 'index', i
-				e.addClass 'square'
-				e.append '<div class="hint"></div>'
+			@reset()
 
 			# Read previous game moves
 
