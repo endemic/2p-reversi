@@ -8,3 +8,7 @@
 Icon?
 ehthumbs.db
 Thumbs.db
+
+# Project specific
+targets
+tools/compiler.jar
