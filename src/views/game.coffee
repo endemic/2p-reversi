@@ -95,6 +95,7 @@ define [
 				_.delay =>
 					@board.removeClass 'shake'
 				, 500
+				
 				return
 
 			# Hide hints if move was successful

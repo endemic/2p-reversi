@@ -1,8 +1,8 @@
 [X] Replace end turn/game alerts with modal popups
 [X] Remove "hint" display unless player tries to make two incorrect moves
 [X] Add an icon or highlight to the player score <div>s, to show whose turn it is
+[X] Update portrait CSS
 [ ] Write some tests to for move validation code
-[ ] Update portrait CSS
 [ ] Change scene transition animation
 [ ] Stagger the "flip" animation of captured pieces
 [ ] Add a "countdown" type effect to the scoring numbers
