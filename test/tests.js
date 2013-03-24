@@ -42,8 +42,9 @@ config([
             piece;
 
         square = $('#game .board > div').eq(index);
-        piece = $('<div class="piece"><div class="white"></div><div class="black"></div>').data('color', color);
+        square.find('.hint').remove();
 
+        piece = $('<div class="piece"><div class="white"></div><div class="black"></div>').data('color', color);
         square.append(piece);
     };
 
@@ -83,9 +84,86 @@ config([
 
         ok(square.children('.piece').length === 1, "Only one game piece per square.");
         ok(square.children('.piece').data('color') === 'white', 'Piece played first still occupies square.');
+
+        // Clean up?
+        game.elem.remove();
     });
 
-    test("Piece placement validation", function () {
-        ok(true, "True!");
+    test("Left piece placement validation", function () {
+        var game,
+            square,
+            squares;
+
+        game = new GameView({ 'el': $('#qunit-fixture') });
+        squares = $('#game .board > div');
+
+        // Initializes teh game board
+        game.reset();
+
+        // Allow placement in any square
+        game.turns = 10;
+
+        placePiece(16, 'white');
+        placePiece(17, 'white');
+        placePiece(18, 'white');
+
+        // Simulate user interaction
+        square = squares.eq(19);
+        square.trigger('click');
+
+        ok(square.children('.piece').length === 0, "No closing piece to the left.");
+
+        // Change color of one piece
+        squares.eq(16).children('.piece').data('color', 'black');
+
+        // Simulate user interaction
+        square = $('#game .board > div').eq(19);
+        square.trigger('click');
+
+        ok(square.children('.piece').length === 1, "Closing piece to the left.");
+
+        ok(squares.eq(17).children('.piece').data('color') === 'black', 'Captured white pieces');
+        ok(squares.eq(18).children('.piece').data('color') === 'black', 'Captured white pieces');
+
+        game.elem.remove();
+    });
+
+    test("Right piece placement validation", function () {
+        var game,
+            square,
+            squares;
+
+        game = new GameView({ 'el': $('#qunit-fixture') });
+        squares = $('#game .board > div');
+
+        // Initializes teh game board
+        game.reset();
+
+        // Allow placement in any square
+        game.turns = 10;
+
+        placePiece(17, 'white');
+        placePiece(18, 'white');
+        placePiece(19, 'white');
+
+        // Simulate user interaction
+        square = squares.eq(16);
+        square.trigger('click');
+
+        ok(square.children('.piece').length === 0, "No closing piece to the left.");
+
+        // Change color of one piece
+        squares.eq(19).children('.piece').data('color', 'black');
+
+        // Simulate user interaction
+        square = $('#game .board > div').eq(16);
+        square.trigger('click');
+
+        ok(square.children('.piece').length === 1, "Closing piece to the left.");
+
+        ok(squares.eq(17).children('.piece').data('color') === 'black', 'Captured white pieces');
+        ok(squares.eq(18).children('.piece').data('color') === 'black', 'Captured white pieces');
+
+        game.elem.remove();
     });
 });
