@@ -101,8 +101,8 @@ body { font-size: 62.5%; background: #000; }
 /****************************/
 /*			DEFAULT			*/
 /****************************/
-#app { position: absolute; top: 0; bottom: 0; left: 0; right: 0; overflow: hidden; font: normal 1.6em/1.5 @font-family; text-align: center; color: @text-color; background: #000; background-size: 100%; .user-select-none;
-	.scene { position: absolute; top: 100%; width: 100%; height: 100%; background: #351125; overflow: hidden;
+#app { position: absolute; top: 0; bottom: 0; left: 0; right: 0; overflow: hidden; font: normal 1.6em/1.5 @font-family; text-align: center; color: @text-color; background: url('../images/ipad-startup-portrait.png') center center no-repeat #000; background-size: cover; .user-select-none;
+	.scene { position: absolute; top: 100%; width: 100%; height: 100%; background: url('../images/low_contrast_linen.png'); overflow: hidden;
 		.container { overflow: hidden; }
 		&.in { -webkit-transition: -webkit-transform 0.5s ease-in-out; -webkit-transform: translateY(-100%); transition: transform 0.5s ease-in-out; transform: translateY(-100%); }
 		&.out { -webkit-transition: -webkit-transform 0.5s ease-in-out; -webkit-transform: translateY(-200%); transition: transform 0.5s ease-in-out; transform: translateY(-200%); }
@@ -127,17 +127,17 @@ body { font-size: 62.5%; background: #000; }
 		}
 	}
 
-	#title { background: url('../images/low_contrast_linen.png');
+	#title { 
 		h1 { font-size: 4em; margin: 10% auto; width: 80%; padding: 1%; text-shadow: 0 4px 9px rgba(0,0,0,0.8); background: url('../images/baize-background.png') #3fa757; border: 10px solid black; box-shadow: 0 4px 9px rgba(0,0,0,0.8); .border-box; }
 		.copyright { margin-top: 55%%; text-shadow: 0 4px 9px rgba(0,0,0,0.8); }
 	}
 
-	#about { background: url('../images/low_contrast_linen.png');
+	#about {
 		h2 { clear: left; text-shadow: 0 4px 9px rgba(0,0,0,0.8); }
 		ul { font-size: 1.1em; text-shadow: 0 4px 9px rgba(0,0,0,0.8); text-align: left; margin: 0 2%; padding: 0 0 0 10%; list-style-type: circle; }
 	}
 
-	#game { background: url('../images/low_contrast_linen.png');
+	#game { 
 			.board { width: 100%; height: 66%; background: url('../images/baize-background.png') #3fa757; border-bottom: 1px solid #000; border-right: 1px solid #000; box-shadow: 0 4px 9px rgba(0,0,0,0.8);
 				/* Board squares */
 				& > div { width: 12.5%; height: 12.5%; float:left; .border-box; border-top: 1px solid #000; border-left: 1px solid #000; -webkit-transition: background-color 1s; -webkit-perspective: 1000; perspective: 1000; /* Not sure if this should be here or not */
@@ -214,22 +214,22 @@ body { font-size: 62.5%; background: #000; }
 
 /* iPhone/iPod Touch */
 @media screen and (max-device-width: 480px) {
-	/*#app { background: url('../images/iphone-startup-portrait.png'); background-size: auto; }*/
+	#app { background: url('../images/iphone-startup-portrait.png'); background-size: auto; }
 }
 
 /* iPhone/iPod Touch (Retina) */
 @media screen and (max-device-width: 480px) and (min-device-pixel-ratio: 2) {
-	/*#app { background: url('../images/iphone-startup-portrait@2x.png') #000; background-size: auto; }*/
+	#app { background: url('../images/iphone-startup-portrait@2x.png') #000; background-size: auto; }
 }
 
 /* iPad (Retina) */
 @media screen and (max-device-width: 768px) and (max-device-width: 1024px) and (min-device-pixel-ratio: 2) {
-	/*#app { background: url('../images/ipad-startup-portrait@2x.png') #000; background-size: auto; }*/
+	#app { background: url('../images/ipad-startup-portrait@2x.png') #000; background-size: auto; }
 }
 
 /* Additional tablet/desktop styles */
 @media screen and (min-device-width: 700px) {
 	#app { 
-		/*.scene { background: url('../images/background@2x.png') 0 0 repeat-x #351125; }*/
+		.scene { background: url('../images/low_contrast_linen_@2X.png'); }
 	}
 }

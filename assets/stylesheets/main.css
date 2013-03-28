@@ -152,8 +152,8 @@ body {
   font: normal 1.6em/1.5 'Bebas Neue', sans-serif;
   text-align: center;
   color: #ffffff;
-  background: #000;
-  background-size: 100%;
+  background: url('../images/ipad-startup-portrait.png') center center no-repeat #000000;
+  background-size: cover;
   -webkit-user-select: none;
   -webkit-touch-callout: none;
   -webkit-tap-highlight-color: transparent;
@@ -176,7 +176,7 @@ body {
   top: 100%;
   width: 100%;
   height: 100%;
-  background: #351125;
+  background: url('../images/low_contrast_linen.png');
   overflow: hidden;
 }
 #app .scene .container {
@@ -257,7 +257,7 @@ body {
   padding: 3%;
   border: 5px solid #000;
   position: absolute;
-  width: 60%;
+  width: 85%;
   z-index: 1;
   box-shadow: 0 4px 9px rgba(0, 0, 0, 0.8);
   -webkit-box-sizing: border-box;
@@ -276,12 +276,10 @@ body {
   margin-bottom: 0;
   font-size: 1.5em;
 }
-#app #title {
-  background: url('../images/low_contrast_linen.png');
-}
 #app #title h1 {
   font-size: 4em;
-  margin-top: 10%;
+  margin: 10% auto;
+  width: 80%;
   padding: 1%;
   text-shadow: 0 4px 9px rgba(0, 0, 0, 0.8);
   background: url('../images/baize-background.png') #3fa757;
@@ -293,25 +291,20 @@ body {
   -moz-box-sizing: border-box;
 }
 #app #title .copyright {
-  margin-top: 40%;
+  margin-top: 55%%;
   text-shadow: 0 4px 9px rgba(0, 0, 0, 0.8);
-}
-#app #about {
-  background: url('../images/low_contrast_linen.png');
 }
 #app #about h2 {
   clear: left;
-  padding-top: 3%;
   text-shadow: 0 4px 9px rgba(0, 0, 0, 0.8);
 }
-#app #about p {
+#app #about ul {
   font-size: 1.1em;
-  padding: 1%;
   text-shadow: 0 4px 9px rgba(0, 0, 0, 0.8);
   text-align: left;
-}
-#app #game {
-  background: url('../images/low_contrast_linen.png');
+  margin: 0 2%;
+  padding: 0 0 0 10%;
+  list-style-type: circle;
 }
 #app #game .board {
   width: 100%;
@@ -401,10 +394,10 @@ body {
 }
 #app #game .info .black,
 #app #game .info .white {
+  width: 35%;
+  height: 90%;
+  margin: 2% 3% 0 0;
   display: inline-block;
-  width: 47%;
-  height: 50%;
-  margin: 1%;
   -webkit-box-sizing: border-box;
   -ms-box-sizing: border-box;
   box-sizing: border-box;
@@ -416,7 +409,8 @@ body {
 #app #game .info .black span,
 #app #game .info .white span {
   display: block;
-  line-height: 0.4;
+  line-height: 1;
+  font-size: 2em;
 }
 #app #game .info .black.turn:before,
 #app #game .info .white.turn:before {
@@ -439,13 +433,21 @@ body {
   border: 5px solid black;
 }
 #app #game .info .button {
+  width: 20%;
+  height: 90%;
+  vertical-align: top;
+  margin: 2% 0% 0 0;
   box-shadow: 0 4px 9px rgba(0, 0, 0, 0.8);
   font-size: 2em;
-  margin: 0;
   -webkit-box-sizing: border-box;
   -ms-box-sizing: border-box;
   box-sizing: border-box;
   -moz-box-sizing: border-box;
+}
+#app #game .info .button span {
+  -webkit-transform: rotateZ(90deg);
+  display: block;
+  margin-top: 85%;
 }
 #app.landscape button {
   width: 35%;
@@ -477,7 +479,7 @@ body {
 #app.landscape #title h1 {
   font-size: 4em;
   line-height: 1;
-  margin: 6% 0 0 0;
+  margin: 6% auto 0 auto;
 }
 #app.landscape #title nav button {
   width: 45%;
@@ -486,14 +488,18 @@ body {
 #app.landscape #title .copyright {
   margin-top: 20%;
 }
-#app.landscape #about h2 {
-  margin: 1%;
-  padding-top: 0;
+#app.landscape #about .button {
+  position: relative;
+  z-index: 1;
 }
-#app.landscape #about p {
-  font-size: 1em;
-  line-height: 2;
-  padding: 1% 0 1% 10%;
+#app.landscape #about h2 {
+  position: relative;
+  left: -8%;
+  margin: 2% 0;
+  clear: none;
+}
+#app.landscape #about ul {
+  clear: left;
 }
 #app.landscape #game .board {
   display: inline-block;
@@ -512,28 +518,45 @@ body {
   display: block;
   font-size: 3.2em;
 }
+#app.landscape #game .info .black span,
+#app.landscape #game .info .white span {
+  line-height: 0.4;
+  font-size: inherit;
+}
 #app.landscape #game .info .button {
   width: 95%;
   height: 15%;
   display: block;
   line-height: 1.4;
 }
+#app.landscape #game .info .button span {
+  display: inline;
+  margin: 0;
+}
 /* iPhone/iPod Touch */
 @media screen and (max-device-width: 480px) {
-  /*#app { background: url('../images/iphone-startup-portrait.png'); background-size: auto; }*/
+  #app {
+    background: url('../images/iphone-startup-portrait.png');
+    background-size: auto;
+  }
 }
 /* iPhone/iPod Touch (Retina) */
 @media screen and (max-device-width: 480px) and (min-device-pixel-ratio: 2) {
-  /*#app { background: url('../images/iphone-startup-portrait@2x.png') #000; background-size: auto; }*/
+  #app {
+    background: url('../images/iphone-startup-portrait@2x.png') #000000;
+    background-size: auto;
+  }
 }
 /* iPad (Retina) */
 @media screen and (max-device-width: 768px) and (max-device-width: 1024px) and (min-device-pixel-ratio: 2) {
-  /*#app { background: url('../images/ipad-startup-portrait@2x.png') #000; background-size: auto; }*/
+  #app {
+    background: url('../images/ipad-startup-portrait@2x.png') #000000;
+    background-size: auto;
+  }
 }
 /* Additional tablet/desktop styles */
 @media screen and (min-device-width: 700px) {
-  #app {
-    /*.scene { background: url('../images/background@2x.png') 0 0 repeat-x #351125; }*/
-  
+  #app .scene {
+    background: url('../images/low_contrast_linen_@2X.png');
   }
 }
