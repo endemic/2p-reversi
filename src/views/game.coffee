@@ -80,6 +80,7 @@ define [
 
 			if captured is false
 				# @trigger 'vfx:play', 'shake'
+				@trigger 'sfx:play', 'error'
 				@incorrect += 1
 
 				# Show a hint if the player tries to play in a bad spot more than 2 times
@@ -101,8 +102,9 @@ define [
 			# Hide hints if move was successful
 			$('.hint').hide()
 
-			# Otherwise, place the piece and flip captured pieces
+			@trigger 'sfx:play', 'move'
 
+			# Otherwise, place the piece and flip captured pieces
 			# Complicated HTML to allow each piece to have a white + black side
 			piece = $('<div class="piece"><div class="white"></div><div class="black"></div>').data('color', 'white')
 
