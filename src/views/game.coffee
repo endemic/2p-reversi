@@ -149,9 +149,9 @@ define [
 					if @blackCount > @whiteCount
 						winner = 'Black Wins!'
 					else if @whiteCount > @blackCount
-						winnner = 'White Wins!'
+						winner = 'White Wins!'
 					else
-						winnner = 'Tie Game!'
+						winner = 'Tie Game!'
 
 					@modal.show
 						'title': "Game Over! #{winner}"
@@ -574,7 +574,9 @@ define [
 				@board.height boardWidth
 
 				# Also resize the info pane so it's the same size as the board (for aesthetic purposes)
-				$('.info', @elem).height boardWidth
+				$('.info', @elem).css
+					'width': '33%'
+					'height': boardWidth
 
 				# Add some margin to the board, so it appears centered
 				margin = (height - boardWidth) / 2
@@ -587,7 +589,9 @@ define [
 				@board.height boardWidth
 
 				# Also resize the info pane so it's the same size as the board (for aesthetic purposes)
-				$('.info', @elem).width boardWidth
+				$('.info', @elem).css
+					'width': boardWidth
+					'height': '33%'
 
 				# Add some margin to the board, so it appears centered
 				margin = (width - boardWidth) / 2
