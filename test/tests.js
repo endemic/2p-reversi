@@ -166,4 +166,82 @@ config([
 
         game.elem.remove();
     });
+
+    test("Top piece placement validation", function () {
+        var game,
+            square,
+            squares;
+
+        game = new GameView({ 'el': $('#qunit-fixture') });
+        squares = $('#game .board > div');
+
+        // Initializes teh game board
+        game.reset();
+
+        // Allow placement in any square
+        game.turns = 10;
+
+        placePiece(6, 'white');
+        placePiece(14, 'white');
+        placePiece(22, 'white');
+
+        // Simulate user interaction
+        square = squares.eq(30);
+        square.trigger('click');
+
+        ok(square.children('.piece').length === 0, "No closing piece to the top.");
+
+        // Change color of one piece
+        squares.eq(6).children('.piece').data('color', 'black');
+
+        // Simulate user interaction
+        square = $('#game .board > div').eq(30);
+        square.trigger('click');
+
+        ok(square.children('.piece').length === 1, "Closing piece to the top.");
+
+        ok(squares.eq(14).children('.piece').data('color') === 'black', 'Captured white pieces');
+        ok(squares.eq(22).children('.piece').data('color') === 'black', 'Captured white pieces');
+
+        game.elem.remove();
+    });
+
+    test("Bottom piece placement validation", function () {
+        var game,
+            square,
+            squares;
+
+        game = new GameView({ 'el': $('#qunit-fixture') });
+        squares = $('#game .board > div');
+
+        // Initializes teh game board
+        game.reset();
+
+        // Allow placement in any square
+        game.turns = 10;
+
+        placePiece(14, 'white');
+        placePiece(22, 'white');
+        placePiece(30, 'white');
+
+        // Simulate user interaction
+        square = squares.eq(6);
+        square.trigger('click');
+
+        ok(square.children('.piece').length === 0, "No closing piece to the top.");
+
+        // Change color of one piece
+        squares.eq(30).children('.piece').data('color', 'black');
+
+        // Simulate user interaction
+        square = $('#game .board > div').eq(6);
+        square.trigger('click');
+
+        ok(square.children('.piece').length === 1, "Closing piece to the top.");
+
+        ok(squares.eq(14).children('.piece').data('color') === 'black', 'Captured white pieces');
+        ok(squares.eq(22).children('.piece').data('color') === 'black', 'Captured white pieces');
+
+        game.elem.remove();
+    });
 });

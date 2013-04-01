@@ -401,8 +401,8 @@ define [
 			# If too close to the left or top border of the board, automatically return false
 			if index - 1 <= leftBorder or index < 16 then return false
 
+			# Check to see if the first square to the upper left exists, and is a different color
 			piece = squares.eq(index - 9).children('.piece')
-			# Check to see if the first square to the bottom exists, and is a different color
 			if piece.length == 0 or piece.data('color') == color then return false
 
 			captured = [index - 9]
@@ -410,6 +410,11 @@ define [
 			# Now, search for a piece of the same color
 			i = index - 18
 			j = index - (index - leftBorder) * 9 	# Determine upper-left most piece from the index
+
+			# Handle condition when upper-left most piece is off the board
+			while j < 0
+				j += 9
+
 			while i >= j
 				piece = squares.eq(i).children('.piece')
 				
@@ -439,8 +444,8 @@ define [
 			# If too close to the right or top border of the board, automatically return false
 			if index + 1 >= rightBorder or index < 16 then return false
 
+			# Check to see if the first square to the upper right exists, and is a different color
 			piece = squares.eq(index - 7).children('.piece')
-			# Check to see if the first square to the bottom exists, and is a different color
 			if piece.length == 0 or piece.data('color') == color then return false
 
 			captured = [index - 7]
@@ -448,6 +453,11 @@ define [
 			# Now, search for a piece of the same color
 			i = index - 14
 			j = index - (rightBorder - index) * 7	# Determine upper-right most piece from the index
+
+			# Handle condition when upper-right most piece is off the board
+			while j < 0
+				j += 7
+
 			while i >= j
 				piece = squares.eq(i).children('.piece')
 				
@@ -477,8 +487,8 @@ define [
 			# If too close to the left or bottom border of the board, automatically return false
 			if index - 1 <= leftBorder or index > 47 then return false
 
+			# Check to see if the first square to the lower left exists, and is a different color
 			piece = squares.eq(index + 7).children('.piece')
-			# Check to see if the first square to the bottom exists, and is a different color
 			if piece.length == 0 or piece.data('color') == color then return false
 
 			captured = [index + 7]
@@ -486,6 +496,11 @@ define [
 			# Now, search for a piece of the same color
 			i = index + 14
 			j = index + (index - leftBorder) * 7 	# Determine lower-right most piece from the index
+
+			# Handle condition when lower left most piece is off the board
+			while j > 63
+				j -= 7
+
 			while i <= j
 				piece = squares.eq(i).children('.piece')
 				
@@ -515,8 +530,8 @@ define [
 			# If too close to the right or bottom border of the board, automatically return false
 			if index + 1 >= rightBorder or index > 47 then return false
 
+			# Check to see if the first square to the lower right exists, and is a different color
 			piece = squares.eq(index + 9).children('.piece')
-			# Check to see if the first square to the bottom exists, and is a different color
 			if piece.length == 0 or piece.data('color') == color then return false
 
 			captured = [index + 9]
@@ -524,6 +539,11 @@ define [
 			# Now, search for a piece of the same color
 			i = index + 18
 			j = index + (rightBorder - index) * 9 	# Determine lower-right most piece from the index
+
+			# Handle condition when lower left most piece is off the board
+			while j > 63
+				j -= 9
+
 			while i <= j
 				piece = squares.eq(i).children('.piece')
 				

@@ -2,7 +2,8 @@
 [X] Remove "hint" display unless player tries to make two incorrect moves
 [X] Add an icon or highlight to the player score <div>s, to show whose turn it is
 [X] Update portrait CSS
-[ ] Write some tests to for move validation code - upper right validation is broken
+[ ] Write some tests to for move validation code
+[ ] Diagonal validation is broken - doesn't find the end piece correctly
 [ ] Hints don't seem to work towards the end of a game
 [ ] Change scene transition animation
 [ ] Stagger the "flip" animation of captured pieces
