@@ -247,7 +247,7 @@ define [
 			# Load sounds
 			for key, sound of Manifest.sounds
 				if Env.cordova
-					@sounds[key] = new Media(sound.src + sound.formats[0])
+					@sounds[key] = new Media("#{sound.src}.#{sound.formats[0]}")
 				else
 					@sounds[key] = new Buzz.sound sound.src,
 						formats: sound.formats
@@ -256,7 +256,7 @@ define [
 			# Load music
 			for key, music of Manifest.music
 				if Env.cordova
-					@music[key] = new Media(music.src + music.formats[0])
+					@music[key] = new Media("#{music.src}.#{music.formats[0]}")
 				else
 					@music[key] = new Buzz.sound music.src,
 						formats: music.formats
