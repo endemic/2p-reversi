@@ -11,7 +11,8 @@ define [
 	'cs!views/title'
 	'cs!views/about'
 	'cs!views/game'
-], ($, _, Backbone, Buzz, Env, Manifest, TitleScene, AboutScene, GameScene) ->
+	'cs!views/gamecenter'
+], ($, _, Backbone, Buzz, Env, Manifest, TitleScene, AboutScene, GameScene, GameCenterScene) ->
 	
 	# Extend local storage
 	Storage.prototype.setObject = (key, value) ->
@@ -56,6 +57,7 @@ define [
 			@scenes.title = new TitleScene { el: @el }
 			@scenes.about = new AboutScene { el: @el }
 			@scenes.game = new GameScene { el: @el }
+			@scenes.gamecenter = new GameCenterScene { el: @el }
 
 			# Bind some event listeners to each scene
 			for id, scene of @scenes

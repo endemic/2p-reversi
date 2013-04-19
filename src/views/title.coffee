@@ -22,13 +22,25 @@ define [
 			@elem = $(template)
 			@render()
 
+			# Show the 2P Game Center button if plugin is available
+			if typeof window.GameCenter != "undefined"
+				$('.gamecenter', @elem).css 'display', 'inline-block'
+
 		navigation: (e) ->
 			e.preventDefault()
 
 			# Don't allow button to be activated more than once
 			@undelegateEvents()
 
+			@trigger 'sfx:play', 'button'
+
 			view = $(e.target).data('view')
 
-			@trigger 'sfx:play', 'button'
-			@trigger 'scene:change', view
+			# Log into Game Center, then switch to the view that lists all games
+			if view is 'gamecenter'
+				window.GameCenter.authenticatePlayer =>
+					@trigger 'scene:change', view
+				, =>
+					console.log "Couldn't log in to Game Center."
+			else
+				@trigger 'scene:change', view
