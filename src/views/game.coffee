@@ -21,6 +21,9 @@ define [
 					'click .quit': 'quit'
 					'click .board > div': 'move'
 
+		# Used for Game Center matches
+		@matchId: null
+
 		initialize: ->
 			@elem = $(template)
 
@@ -34,31 +37,56 @@ define [
 			# Reference for the game board
 			@board = $('.board', @elem)
 
+			# Change text in "quit" button if playing a multiplayer game
+			if @matchId != null then @$('.button.quit span').html 'Options'
+
 			@turns = 0
 
 			@render()
 
 		quit: (e) ->
 			e.preventDefault()
-
 			@trigger 'sfx:play', 'button'
 
-			@modal.show
-				'title': 'Are you sure?'
-				'buttons': [
-					{
-						'text': 'Yes, quit'
-						'callback': =>
-							@trigger 'scene:change', 'title'
-					}, {
-						'text': 'No, play'
-					}
-				]
+			if @matchId is null
+				@modal.show
+					'title': 'Are you sure?'
+					'buttons': [
+						{
+							'text': 'Yes, quit'
+							'callback': =>
+								@trigger 'scene:change', 'title'
+						}, {
+							'text': 'No, play'
+						}
+					]
+			else
+				@modal.show
+					'title': 'Options'
+					'buttons': [
+						{
+							'text': 'Back'
+							'callback': =>
+								@trigger 'scene:change', 'gamecenter'
+						}, {
+							'text': 'Play'
+						}
+					]
 
 		###
 		@description Place a piece
 		###
 		move: (e) ->
+
+			# Handle Game Center matches -- only allow active player to play
+			if GameCenter? and GameCenter.matches[@matchId].currentParticipant.playerId != window.GameCenter.authenticatedPlayer.playerId
+				@board.addClass 'shake'
+				_.delay =>
+					@board.removeClass 'shake'
+				, 500
+
+				return
+
 			# Where we append the piece
 			square = $(e.target)
 
@@ -68,9 +96,6 @@ define [
 
 			# Only allow one piece per spot on the game board
 			if square.children('.piece').length > 0 then return
-
-			# Remove the hint in the square the user is trying to play on
-			square.children('.hint').remove()
 
 			# Find the index of the current piece
 			index = parseInt square.data('index'), 10
@@ -99,7 +124,10 @@ define [
 				
 				return
 
-			# Hide hints if move was successful
+			# Remove the hint in the square the user is playing on
+			square.children('.hint').remove()
+
+			# Hide other hints if move was successful
 			$('.hint').hide()
 
 			@trigger 'sfx:play', 'move'
@@ -113,7 +141,7 @@ define [
 			# Animate into view
 			piece.animate { 'opacity': 1 }, 200
 
-			# Flip to black if necessary - TODO: use "animate" so vendor prefixes are automatically added
+			# Flip to black if necessary
 			if @currentPlayer is 'black' then piece.animate({ 'rotateY': '180deg' }).data('color', 'black')
 
 			# Flip captured pieces
@@ -145,8 +173,7 @@ define [
 
 			# Check to see if the next player can actually move
 			if validMoves.length is 0
-				# Check whether the other player can play again
-				# If not, the game is over
+				# Check whether the other player can play again; if not, the game is over
 				if @canPlay(previousPlayer).length is 0
 					if @blackCount > @whiteCount
 						winner = 'Black Wins!'
@@ -168,12 +195,22 @@ define [
 									@trigger 'scene:change', 'title'
 							}
 						]
+
+					# End the game center match
+					GameCenter?.endMatch GameCenter.matches[@matchId].data
 				else
 					# If they can, then show a message saying that the current player's turn was skipped
 					@modal.show
 						'title': "#{@currentPlayer} can't play, so it's #{previousPlayer}'s turn."
 						'buttons': [{'text': 'OK'} ]
 					@currentPlayer = previousPlayer
+
+					skipNextPlayer = true
+					GameCenter?.advanceTurn GameCenter.matches[@matchId].data, skipNextPlayer
+					# TODO: Advance the turn, while skipping the next player
+			else
+				# Advance Game Center data
+				GameCenter?.advanceTurn GameCenter.matches[@matchId].data
 
 			# Highlight the current player's score box
 			$(".info > div", this.elem).removeClass 'turn'
@@ -620,11 +657,55 @@ define [
 				@board.css { 'margin': "0 #{margin}px" }
 				$('.info', @elem).css { 'margin': "0 #{margin}px" }
 
+		###
+		@description Takes an array representing current board state, and places pieces accordingly
+		###
+		restoreBoard: ->
+			data = window.GameCenter.matches[@matchId].data
+			i = data.length
+
+			while i--
+				color = data[i]
+
+				if color is 0 then continue
+
+				piece = $('<div class="piece"><div class="white"></div><div class="black"></div>').data('color', 'white')
+				square = @board.eq i
+				square.append piece
+
+				# Animate into view
+				piece.css { 'opacity': 1 }
+
+				# Flip to black if necessary
+				if color is 1
+					piece.animate({ 'rotateY': '180deg' }).data('color', 'black')
+
+		###
+		@description Called before scene transitions in
+		###
 		show: (duration = 500, callback) ->
 			super duration, callback
 
 			@reset()
 
-			# Read previous game moves
+			# Load Game Center match
+			if @matchId != null
+				window.GameCenter.loadMatch @matchId, (data) =>
+					try
+						data = JSON.parse(data)
+					catch e
+						# Data format - "board" prop is 64 index array representing board state (0: empty, 1: black, 2: white)
+						# "moves" prop stores the sequential moves in the game (e.g. 34, 36, 36, 46)
+						data =
+							'board': []
+							'moves': []
 
-			# Re-create the current game state
+						while data.board.length < 64
+							data.board.push 0
+
+					# Store in global var
+					window.GameCenter.matches[@matchId].data = data
+					
+					@restoreBoard()
+				, (error) =>
+					alert error

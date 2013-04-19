@@ -6,8 +6,9 @@ define [
 	'backbone'
 	'cs!utilities/environment'
 	'cs!views/common/scene'
+	'cs!views/common/modal'
 	'text!templates/title.html'
-], ($, Backbone, Env, Scene, template) ->
+], ($, Backbone, Env, Scene, Modal, template) ->
 	class TitleScene extends Scene
 		events: ->
 			# Determine whether touchscreen or desktop
@@ -20,27 +21,48 @@ define [
 
 		initialize: ->
 			@elem = $(template)
+
+			# Instantiate a reusable modal, and attach it to this scene
+			@modal = new Modal { el: @elem }
+
+			# Listen for sfx events from the modal
+			@modal.on 'sfx:play', (id) => 
+				@trigger 'sfx:play', id
+
 			@render()
 
-			# Show the 2P Game Center button if plugin is available
 			if typeof window.GameCenter != "undefined"
 				$('.gamecenter', @elem).css 'display', 'inline-block'
 
+				@authenticated = false
+
+				# Auto login
+				window.GameCenter.authenticatePlayer (player) =>
+					# Store player details
+					window.GameCenter.authenticatedPlayer = player
+					@authenticated = true
+				, =>
+					@authenticated = false
+					console.log "Couldn't log in to Game Center."
+
 		navigation: (e) ->
 			e.preventDefault()
-
-			# Don't allow button to be activated more than once
-			@undelegateEvents()
-
 			@trigger 'sfx:play', 'button'
 
 			view = $(e.target).data('view')
 
-			# Log into Game Center, then switch to the view that lists all games
-			if view is 'gamecenter'
-				window.GameCenter.authenticatePlayer =>
-					@trigger 'scene:change', view
-				, =>
-					console.log "Couldn't log in to Game Center."
-			else
-				@trigger 'scene:change', view
+			# Show a message if there was a problem authenticating
+			if view is 'gamecenter' and @authenticated is false
+				@modal.show
+					'title': "Uh Oh!"
+					'message': "We couldn't log in to Game Center. Please log in using the Game Center app."
+					'buttons': [
+						{
+							'text': 'OK'
+						}
+					]
+				return
+
+			# Don't scene change buttons to be activated more than once
+			@undelegateEvents()
+			@trigger 'scene:change', view

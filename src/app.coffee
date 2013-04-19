@@ -99,10 +99,10 @@ define [
 			if @scenes[scene]?
 				@activeScene = @scenes[scene]
 
-				# if options != undefined
 				# Pass options through to new scene
-				for key, value of options?
-					@activeScene[key] = value
+				if options != undefined
+					for key, value of options
+						@activeScene[key] = value
 			else
 				alert "Sorry, #{scene} isn't a scene. Redirecting to title..."
 				@activeScene = @scenes.title
@@ -228,6 +228,10 @@ define [
 
 			if localStorage.getItem('playSfx') == null
 				localStorage.setItem 'playSfx', true
+
+			# Array that contains purchased IAP product IDs
+			if localStorage.getObject('purchased') == null
+				localStorage.setObject 'purchased', []
 
 		###
 		@description Handle instantiating audio objects

@@ -1,11 +1,11 @@
-[X] Replace end turn/game alerts with modal popups
-[X] Remove "hint" display unless player tries to make two incorrect moves
-[X] Add an icon or highlight to the player score <div>s, to show whose turn it is
-[X] Update portrait CSS
 [ ] Write some tests to for move validation code
 [ ] Diagonal validation is broken - doesn't find the end piece correctly
 [ ] Hints don't seem to work towards the end of a game
 [ ] Change scene transition animation
 [ ] Stagger the "flip" animation of captured pieces
 [ ] Add a "countdown" type effect to the scoring numbers
-[ ] Add some simple sound effects
+
+Notes:
+* The "game" scene is passed a "matchId" to indicate player is updating a Game Center game. That matchId property sticks with the scene, since the scene is never 
+re-instantiated. So set matchId = null when transitioning out of the "game" scene.
+* Change loadMatches to return a hash table instead of an array
