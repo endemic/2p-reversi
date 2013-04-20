@@ -38,7 +38,7 @@ define [
 			@board = $('.board', @elem)
 
 			# Change text in "quit" button if playing a multiplayer game
-			if @matchId != null then @$('.button.quit span').html 'Options'
+			if @matchId != null then @$('.button.quit span').html 'Back'
 
 			@turns = 0
 
@@ -61,25 +61,17 @@ define [
 						}
 					]
 			else
-				@modal.show
-					'title': 'Options'
-					'buttons': [
-						{
-							'text': 'Back'
-							'callback': =>
-								@trigger 'scene:change', 'gamecenter'
-						}, {
-							'text': 'Play'
-						}
-					]
+				# Go back to the game list
+				@matchId = null
+				@trigger 'scene:change', 'gamecenter'
 
 		###
 		@description Place a piece
 		###
 		move: (e) ->
-
 			# Handle Game Center matches -- only allow active player to play
-			if GameCenter? and GameCenter.matches[@matchId].currentParticipant.playerId != window.GameCenter.authenticatedPlayer.playerId
+			if GameCenter? and GameCenter.matches[@matchId].participants[0].playerId != GameCenter.authenticatedPlayer.playerId
+				@trigger 'sfx:play', 'error'
 				@board.addClass 'shake'
 				_.delay =>
 					@board.removeClass 'shake'
@@ -165,6 +157,10 @@ define [
 			@incorrect = 0
 			previousPlayer = @currentPlayer
 
+			# Store move in Game Center data
+			GameCenter.matches[@matchId].data.moves.push index
+			GameCenter.matches[@matchId].data.board[index] = if @currentPlayer is "black" then 1 else 2
+
 			# Swap turn
 			if @currentPlayer is "black" then @currentPlayer = "white" else @currentPlayer = "black"
 
@@ -211,6 +207,9 @@ define [
 			else
 				# Advance Game Center data
 				GameCenter?.advanceTurn GameCenter.matches[@matchId].data
+
+				# Splice the participant list so current player can't play again
+				GameCenter.matches[@matchId].participants.push(GameCenter.matches[@matchId].participants.splice(0, 1)[0])
 
 			# Highlight the current player's score box
 			$(".info > div", this.elem).removeClass 'turn'
@@ -661,7 +660,7 @@ define [
 		@description Takes an array representing current board state, and places pieces accordingly
 		###
 		restoreBoard: ->
-			data = window.GameCenter.matches[@matchId].data
+			data = GameCenter.matches[@matchId].data
 			i = data.length
 
 			while i--
@@ -689,8 +688,8 @@ define [
 			@reset()
 
 			# Load Game Center match
-			if @matchId != null
-				window.GameCenter.loadMatch @matchId, (data) =>
+			if GameCenter? and @matchId != null
+				GameCenter.loadMatch @matchId, (data) =>
 					try
 						data = JSON.parse(data)
 					catch e
@@ -704,7 +703,10 @@ define [
 							data.board.push 0
 
 					# Store in global var
-					window.GameCenter.matches[@matchId].data = data
+					GameCenter.matches[@matchId].data = data
+
+					# Set the color of the current player
+					@currentPlayer = if data.moves.length % 2 is 0 then "black" else "white"
 					
 					@restoreBoard()
 				, (error) =>

@@ -31,15 +31,15 @@ define [
 
 			@render()
 
-			if typeof window.GameCenter != "undefined"
+			if GameCenter?
 				$('.gamecenter', @elem).css 'display', 'inline-block'
 
 				@authenticated = false
 
 				# Auto login
-				window.GameCenter.authenticatePlayer (player) =>
+				GameCenter.authenticatePlayer (player) =>
 					# Store player details
-					window.GameCenter.authenticatedPlayer = player
+					GameCenter.authenticatedPlayer = player
 					@authenticated = true
 				, =>
 					@authenticated = false

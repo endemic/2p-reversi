@@ -102,8 +102,8 @@ body { font-size: 62.5%; background: #000; }
 /*			DEFAULT			*/
 /****************************/
 #app { position: absolute; top: 0; bottom: 0; left: 0; right: 0; overflow: hidden; font: normal 1.6em/1.5 @font-family; text-align: center; color: @text-color; background: url('../images/ipad-startup-portrait.png') center center no-repeat #000; background-size: cover; .user-select-none;
-	.scene { position: absolute; top: 100%; width: 100%; height: 100%; background: url('../images/low_contrast_linen.png'); overflow: hidden;
-		.container { overflow: hidden; }
+	.scene { position: absolute; top: 100%; width: 100%; height: 100%; background: url('../images/low_contrast_linen.png'); overflow: auto;
+		.container { overflow: auto; }
 		&.in { -webkit-transition: -webkit-transform 0.5s ease-in-out; -webkit-transform: translateY(-100%); transition: transform 0.5s ease-in-out; transform: translateY(-100%); }
 		&.out { -webkit-transition: -webkit-transform 0.5s ease-in-out; -webkit-transform: translateY(-200%); transition: transform 0.5s ease-in-out; transform: translateY(-200%); }
 	}

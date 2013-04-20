@@ -45,8 +45,6 @@ define [
 
 			# Custom callbacks for Game Center methods
 			GameCenter.foundMatch = (matchId) =>
-				index = 0
-
 				# Transition to the gameplay view
 				@trigger 'scene:change', 'game', { 'matchId': matchId }
 
@@ -72,7 +70,7 @@ define [
 			e.preventDefault()
 			@trigger 'sfx:play', 'button'
 
-			if @activeMatches > 1 and @purchased.indexOf('com.ganbarugames.reversi.unlimited-games') is -1
+			if @activeMatches > 100 and @purchased.indexOf('com.ganbarugames.reversi.unlimited-games') is -1
 				@modal.show
 					'title': 'Unlock Unlimited Games!'
 					'message': "Play unlimited multiplayer games for only $0.99. Already unlocked? Hit the 'restore' button."
@@ -99,6 +97,7 @@ define [
 		###
 		loadMatch: (e) ->
 			e.preventDefault()
+			@trigger 'sfx:play', 'button'
 
 			matchId = $(e.target).data 'id'
 			match = GameCenter.matches[matchId]
@@ -144,7 +143,9 @@ define [
 					match.participants[1].alias = "Opponent";
 
 				text = "#{match.participants[0].alias} vs. #{match.participants[1].alias}<br>"
-				if match.currentParticipant.playerId == GameCenter.authenticatedPlayer.playerId then text += "your turn" else text += "opponent's turn"
+
+				if GameCenter.GKTurnBasedMatchStatus[match.status] is 'GKTurnBasedMatchStatusEnded' then text += "game over"
+				else if match.currentParticipant.playerId == GameCenter.authenticatedPlayer.playerId then text += "your turn" else text += "opponent's turn"
 
 				container.append '<li id="' + id + '" class="match" data-id="' + id + '">' + text + '</li>'
 
