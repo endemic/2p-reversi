@@ -15,6 +15,8 @@ define [
 			if Env.mobile
 				events =
 					'touchstart .button': 'navigation'
+					'touchmove': (e) ->
+						e.preventDefault()
 			else
 				events =
 					'click .button': 'navigation'

@@ -6,6 +6,6 @@
 [ ] Add a "countdown" type effect to the scoring numbers
 
 Notes:
-* The "game" scene is passed a "matchId" to indicate player is updating a Game Center game. That matchId property sticks with the scene, since the scene is never 
-re-instantiated. So set matchId = null when transitioning out of the "game" scene.
-* Change loadMatches to return a hash table instead of an array
+* Figure out way to drag and not select list of multiplayer games... make them <a> tags?
+* Tweak title layout style for title screen (portrait/landscape)
+* Test on multiple devices

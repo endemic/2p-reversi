@@ -80,9 +80,9 @@ define [
 			$(window).on 'resize', @resize
 
 			# Prevent content from dragging around on touchscreens
-			if Env.mobile
-				$('body').on 'touchmove', (e) ->
-					e.preventDefault()
+			# if Env.mobile
+			# 	$('body').on 'touchmove', (e) ->
+			# 		e.preventDefault()
 
 			# Show the active scene after a slight delay, so user can view the amazing splash screen
 			_.delay =>

@@ -15,11 +15,13 @@ define [
 			if Env.mobile
 				events = 
 					'touchend .quit': 'quit'
-					'touchend .board > div': 'move'
+					'touchend .board .square': 'move'
+					'touchmove': (e) ->
+						e.preventDefault()
 			else
 				events = 
 					'click .quit': 'quit'
-					'click .board > div': 'move'
+					'click .board .square': 'move'
 
 		# Used for Game Center matches
 		@matchId: null
@@ -36,11 +38,6 @@ define [
 
 			# Reference for the game board
 			@board = $('.board', @elem)
-
-			# Change text in "quit" button if playing a multiplayer game
-			if @matchId != null then @$('.button.quit span').html 'Back'
-
-			@turns = 0
 
 			@render()
 
@@ -70,7 +67,7 @@ define [
 		###
 		move: (e) ->
 			# Handle Game Center matches -- only allow active player to play
-			if GameCenter? and GameCenter.matches[@matchId].participants[0].playerId != GameCenter.authenticatedPlayer.playerId
+			if @matchId != null and GameCenter.matches[@matchId].currentParticipant.playerId != GameCenter.authenticatedPlayer.playerId
 				@trigger 'sfx:play', 'error'
 				@board.addClass 'shake'
 				_.delay =>
@@ -83,7 +80,6 @@ define [
 			square = $(e.target)
 
 			# Don't allow nested piece placement
-			# if not square.data('index') then return
 			if square.hasClass('square') is false then square = square.parents('.square')
 
 			# Only allow one piece per spot on the game board
@@ -96,7 +92,6 @@ define [
 			captured = @validate index, @currentPlayer
 
 			if captured is false
-				# @trigger 'vfx:play', 'shake'
 				@trigger 'sfx:play', 'error'
 				@incorrect += 1
 
@@ -158,8 +153,9 @@ define [
 			previousPlayer = @currentPlayer
 
 			# Store move in Game Center data
-			GameCenter.matches[@matchId].data.moves.push index
-			GameCenter.matches[@matchId].data.board[index] = if @currentPlayer is "black" then 1 else 2
+			if @matchId != null
+				GameCenter.matches[@matchId].data.moves.push index
+				GameCenter.matches[@matchId].data.board[index] = if @currentPlayer is "black" then 1 else 2
 
 			# Swap turn
 			if @currentPlayer is "black" then @currentPlayer = "white" else @currentPlayer = "black"
@@ -178,6 +174,7 @@ define [
 					else
 						winner = 'Tie Game!'
 
+					# TODO: Update this for Game Center matches
 					@modal.show
 						'title': "Game Over! #{winner}"
 						'buttons': [
@@ -193,27 +190,38 @@ define [
 						]
 
 					# End the game center match
-					GameCenter?.endMatch GameCenter.matches[@matchId].data
+					if @matchId != null then GameCenter.endMatch @matchId, GameCenter.matches[@matchId].data, ->
+						console.log "Ended match"
+					, (error) ->
+						console.log "Error ending match: #{error}"
 				else
 					# If they can, then show a message saying that the current player's turn was skipped
 					@modal.show
 						'title': "#{@currentPlayer} can't play, so it's #{previousPlayer}'s turn."
-						'buttons': [{'text': 'OK'} ]
+						'buttons': [{ 'text': 'OK' }]
 					@currentPlayer = previousPlayer
 
-					skipNextPlayer = true
-					GameCenter?.advanceTurn GameCenter.matches[@matchId].data, skipNextPlayer
-					# TODO: Advance the turn, while skipping the next player
-			else
+					# Advance the turn, while skipping the next player
+					if @matchId != null
+						skipNextPlayer = true
+						GameCenter.advanceTurn @matchId, GameCenter.matches[@matchId].data, skipNextPlayer
+			else if @matchId != null
 				# Advance Game Center data
-				GameCenter?.advanceTurn GameCenter.matches[@matchId].data
+				skipNextPlayer = false
+				GameCenter.advanceTurn @matchId, GameCenter.matches[@matchId].data, skipNextPlayer, ->
+					console.log "Advanced turn successfully"
+				, (error) ->
+					console.log "Couldn't advance turn: #{error}"
 
-				# Splice the participant list so current player can't play again
+				# Splice the JS representation of the participant list so current player can't play again
 				GameCenter.matches[@matchId].participants.push(GameCenter.matches[@matchId].participants.splice(0, 1)[0])
 
+				# Set the "current" participant
+				GameCenter.matches[@matchId].currentParticipant = GameCenter.matches[@matchId].participants[0]
+
 			# Highlight the current player's score box
-			$(".info > div", this.elem).removeClass 'turn'
-			$(".info .#{@currentPlayer}", this.elem).addClass 'turn'
+			$(".info > div", @elem).removeClass 'turn'
+			$(".info .#{@currentPlayer}", @elem).addClass 'turn'
 
 		###
 		Update the piece count
@@ -660,7 +668,7 @@ define [
 		@description Takes an array representing current board state, and places pieces accordingly
 		###
 		restoreBoard: ->
-			data = GameCenter.matches[@matchId].data
+			data = GameCenter.matches[@matchId].data.board
 			i = data.length
 
 			while i--
@@ -669,15 +677,18 @@ define [
 				if color is 0 then continue
 
 				piece = $('<div class="piece"><div class="white"></div><div class="black"></div>').data('color', 'white')
-				square = @board.eq i
-				square.append piece
+				square = @board.children('div').eq i
 
-				# Animate into view
+				square.append piece
+				square.children('.hint').remove()
+
+				# Show piece
 				piece.css { 'opacity': 1 }
 
 				# Flip to black if necessary
-				if color is 1
-					piece.animate({ 'rotateY': '180deg' }).data('color', 'black')
+				if color is 1 then piece.animate({ 'rotateY': '180deg' }, 0).data('color', 'black')
+
+			@updateScore()
 
 		###
 		@description Called before scene transitions in
@@ -686,6 +697,11 @@ define [
 			super duration, callback
 
 			@reset()
+
+			if @matchId is undefined then @matchId = null
+
+			# Change text in "quit" button if playing a multiplayer game
+			if @matchId != null then $('.button.quit span', @elem).html('Back') else $('.button.quit span', @elem).html('Quit')
 
 			# Load Game Center match
 			if GameCenter? and @matchId != null
@@ -707,6 +723,10 @@ define [
 
 					# Set the color of the current player
 					@currentPlayer = if data.moves.length % 2 is 0 then "black" else "white"
+
+					# Highlight the current player's score box
+					$(".info > div", @elem).removeClass 'turn'
+					$(".info .#{@currentPlayer}", @elem).addClass 'turn'
 					
 					@restoreBoard()
 				, (error) =>
